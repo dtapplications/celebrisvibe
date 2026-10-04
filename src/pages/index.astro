@@ -1,0 +1,56 @@
+---
+import App from '../components/App';
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Celebris Vibe</title>
+  <link rel="icon" href="/assets/celebris-logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: 'Jost', Helvetica, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { text-decoration: none; }
+    input, select, textarea, button { font-family: inherit; }
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible {
+      outline: 2px solid #8a6d3b;
+      outline-offset: 3px;
+    }
+    @keyframes cvspin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; animation: none !important; }
+    }
+    /* Hover effects driven by CSS custom properties set on the wrapper */
+    .cv-btn-primary:hover {
+      background: var(--cv-gold) !important;
+    }
+    .cv-card:hover {
+      transform: translateY(-4px) !important;
+      box-shadow: 0 24px 48px -28px rgba(0,0,0,0.35) !important;
+    }
+    .cv-event-card:hover {
+      transform: translateY(-6px) !important;
+      box-shadow: 0 30px 60px -30px rgba(0,0,0,0.4) !important;
+    }
+    .cv-event-row:hover {
+      transform: translateY(-2px) !important;
+    }
+  </style>
+</head>
+<body>
+  <App client:load />
+</body>
+</html>
