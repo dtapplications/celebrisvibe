@@ -12,7 +12,7 @@ interface Theme {
   muted: string; faint: string; gold: string; frame: string;
   bandLine: string; bandText: string; bandGold: string;
   bandS1: string; bandS2: string; bandActive: string;
-  logo: string; dot: string;
+  logo: string;
 }
 
 // ─── Theme tokens ─────────────────────────────────────────────────────────────
@@ -24,7 +24,7 @@ const LIGHT: Theme = {
   faint: '#7b7d84', gold: '#8a6d3b', frame: '#c9ad78',
   bandLine: '#4a4c54', bandText: '#c4c5ca', bandGold: '#c9ad78',
   bandS1: '#26282e', bandS2: '#2d2f36', bandActive: '#2a2c33',
-  logo: 'none', dot: 'transparent',
+  logo: 'none',
 };
 
 const DARK: Theme = {
@@ -34,10 +34,13 @@ const DARK: Theme = {
   faint: '#74767d', gold: '#c9ad78', frame: '#8a6d3b',
   bandLine: '#c9c7be', bandText: '#3e4048', bandGold: '#8a6d3b',
   bandS1: '#d8d6ce', bandS2: '#e0ded7', bandActive: '#ffffff',
-  logo: 'invert(1)', dot: '#eceae3',
+  logo: 'invert(1)',
 };
 
 // ─── Static data ──────────────────────────────────────────────────────────────
+
+// Prefix with the Astro base path so assets resolve under /celebrisvibe/ on GitHub Pages
+const LOGO = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/assets/celebris-logo.png`;
 
 const ALL_EVENTS = [
   { day: 'Sat Oct', date: '18', type: 'Concert',   title: 'Celebris Live Sessions',    hint: 'stage lights',   venue: 'Grand Hall',       lineup: 'Live band and special guests',    price: 'From $60'  },
@@ -139,6 +142,7 @@ export default function App() {
   const [sent, setSent]           = useState(false);
   const [tickets, setTickets]     = useState<Record<string, boolean>>({});
   const [artistIdx, setArtistIdx] = useState<number | null>(null);
+  const [menuOpen, setMenuOpen]   = useState(false);
   const picked = useRef(false);
 
   const t = isDark ? DARK : LIGHT;
@@ -156,6 +160,7 @@ export default function App() {
   const go = (p: Page, extra?: { mode?: Mode; type?: string; note?: string }) => {
     setPage(p);
     setArtistIdx(null);
+    setMenuOpen(false);
     if (extra?.mode !== undefined) setMode(extra.mode);
     if (extra?.type !== undefined) setType(extra.type);
     if (extra?.note !== undefined) setNote(extra.note);
@@ -238,10 +243,10 @@ export default function App() {
       {/* ── HEADER ── */}
       <header style={{ position: 'sticky', top: 12, zIndex: 30, margin: '12px clamp(12px,2vw,24px) 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, padding: '8px 8px 8px 18px', background: t.headerBg, backdropFilter: 'blur(14px)', border: `1px solid ${t.line}`, borderRadius: 999, flexWrap: 'nowrap' }}>
         <button onClick={() => go('home')} style={{ flex: 'none', display: 'flex', alignItems: 'center', gap: 12, background: 'none', border: 'none', color: t.ink, cursor: 'pointer', padding: 0 }}>
-          <img src="/assets/celebris-logo.png" alt="Celebris Vibe" style={{ height: 42, filter: t.logo }} />
+          <img src={LOGO} alt="Celebris Vibe" className="cv-header-logo" style={{ height: 42, filter: t.logo }} />
         </button>
 
-        <nav style={{ display: 'flex', gap: 2, flexWrap: 'nowrap', flex: '1 1 auto', minWidth: 0, overflowX: 'auto', justifyContent: 'center', scrollbarWidth: 'none' } as CSSProperties}>
+        <nav className="cv-nav" style={{ display: 'flex', gap: 2, flexWrap: 'nowrap', flex: '1 1 auto', minWidth: 0, overflowX: 'auto', justifyContent: 'center', scrollbarWidth: 'none' } as CSSProperties}>
           {PAGES.slice(1).map(([k, label]) => (
             <button key={k} onClick={() => go(k)} style={{ background: page === k ? t.card : 'none', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap', flex: 'none', padding: '8px 11px', borderRadius: 999, fontSize: 15, color: page === k ? t.ink : t.muted, transition: 'background 200ms' }}>
               {label}
@@ -249,13 +254,41 @@ export default function App() {
           ))}
         </nav>
 
-        <button onClick={() => setIsDark(d => !d)} aria-label="Switch colour theme" title={isDark ? 'Switch to light' : 'Switch to dark'} style={{ flex: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', width: 40, height: 40, border: `1px solid ${t.chip}`, borderRadius: 999, background: 'transparent', cursor: 'pointer' }}>
-          <span style={{ width: 14, height: 14, borderRadius: '50%', border: `1.5px solid ${t.ink}`, background: t.dot, display: 'block' }} />
+        <button onClick={() => setIsDark(d => !d)} className="cv-theme-btn" aria-label="Switch colour theme" title={isDark ? 'Switch to light' : 'Switch to dark'} style={{ flex: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', width: 40, height: 40, border: `1px solid ${t.chip}`, borderRadius: 999, background: 'transparent', cursor: 'pointer' }}>
+          {isDark ? (
+            // Sun: shown in dark mode, switches to light
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={t.ink} strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="4.5" />
+              <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+            </svg>
+          ) : (
+            // Moon: shown in light mode, switches to dark
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={t.ink} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+          )}
         </button>
 
-        <button onClick={() => go('contact', { mode: 'inquiry' })} className="cv-btn-primary" style={{ flex: 'none', whiteSpace: 'nowrap', padding: '12px 22px', border: 'none', borderRadius: 999, background: t.ink, color: t.paper, fontWeight: 500, fontSize: 15, cursor: 'pointer', transition: 'background 200ms' }}>
+        <button onClick={() => go('contact', { mode: 'inquiry' })} className="cv-btn-primary cv-header-cta" style={{ flex: 'none', whiteSpace: 'nowrap', padding: '12px 22px', border: 'none', borderRadius: 999, background: t.ink, color: t.paper, fontWeight: 500, fontSize: 15, cursor: 'pointer', transition: 'background 200ms' }}>
           Plan an event
         </button>
+
+        <button onClick={() => setMenuOpen(o => !o)} className="cv-menu-btn" aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen} style={{ flex: 'none', display: 'none', alignItems: 'center', justifyContent: 'center', width: 40, height: 40, border: 'none', borderRadius: 999, background: t.ink, color: t.paper, fontSize: 18, cursor: 'pointer' }}>
+          {menuOpen ? '×' : '☰'}
+        </button>
+
+        {menuOpen && (
+          <div className="cv-mobile-menu" style={{ position: 'absolute', top: 'calc(100% + 8px)', left: 0, right: 0, display: 'flex', flexDirection: 'column', gap: 2, padding: 10, background: t.paper, border: `1px solid ${t.line}`, borderRadius: 24, boxShadow: '0 24px 48px -24px rgba(0,0,0,0.35)' }}>
+            {PAGES.map(([k, label]) => (
+              <button key={k} onClick={() => go(k)} style={{ textAlign: 'left', background: page === k ? t.card : 'none', border: 'none', cursor: 'pointer', padding: '14px 16px', borderRadius: 16, fontSize: 17, color: page === k ? t.ink : t.body }}>
+                {label}
+              </button>
+            ))}
+            <button onClick={() => go('contact', { mode: 'inquiry' })} style={{ marginTop: 6, padding: '15px 18px', border: 'none', borderRadius: 999, background: t.ink, color: t.paper, fontWeight: 500, fontSize: 16, cursor: 'pointer' }}>
+              Plan an event
+            </button>
+          </div>
+        )}
       </header>
 
       {/* ════════════════════════════════════════════ HOME ════════════════════ */}
@@ -265,7 +298,7 @@ export default function App() {
         <section style={{ padding: 'clamp(48px,7vw,104px) clamp(20px,4vw,64px) clamp(56px,7vw,96px)', display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,460px),1fr))', gap: 'clamp(40px,5vw,80px)', alignItems: 'center' }}>
           <div>
             <Pill>Event planning and production</Pill>
-            <h1 style={{ margin: '24px 0 0', fontFamily: "'Bricolage Grotesque',sans-serif", fontWeight: 600, letterSpacing: '-0.04em', fontSize: 'clamp(56px,7.6vw,124px)', lineHeight: 0.95 }}>
+            <h1 style={{ margin: '24px 0 0', fontFamily: "'Bricolage Grotesque',sans-serif", fontWeight: 600, letterSpacing: '-0.04em', fontSize: 'clamp(44px,7.6vw,124px)', lineHeight: 0.95 }}>
               You set the date. We set the room.
             </h1>
             <p style={{ margin: '32px 0 0', fontSize: 20, fontWeight: 300, lineHeight: 1.55, maxWidth: 500, color: t.body }}>
@@ -286,9 +319,9 @@ export default function App() {
               <span style={{ fontSize: 12, color: t.faint }}>photo: reception, warm light</span>
             </div>
             <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none', animation: 'cvspin 90s linear infinite' }}>
-              <img src="/assets/celebris-logo.png" alt="" style={{ position: 'absolute', width: '273%', left: '-86.8%', top: '-72.2%', maxWidth: 'none', filter: t.logo }} />
+              <img src={LOGO} alt="" style={{ position: 'absolute', width: '273%', left: '-86.8%', top: '-72.2%', maxWidth: 'none', filter: t.logo }} />
             </div>
-            <button onClick={() => go('events')} style={{ position: 'absolute', right: -4, bottom: '6%', padding: '16px 20px', background: t.paper, border: `1px solid ${t.line}`, borderRadius: 20, boxShadow: '0 24px 48px -24px rgba(0,0,0,0.35)', textAlign: 'left', cursor: 'pointer', color: t.ink }}>
+            <button onClick={() => go('events')} className="cv-next-event" style={{ position: 'absolute', right: -4, bottom: '6%', padding: '16px 20px', background: t.paper, border: `1px solid ${t.line}`, borderRadius: 20, boxShadow: '0 24px 48px -24px rgba(0,0,0,0.35)', textAlign: 'left', cursor: 'pointer', color: t.ink }}>
               <div style={{ fontSize: 11, color: t.gold }}>Next public event</div>
               <div style={{ fontFamily: "'Bricolage Grotesque',sans-serif", fontWeight: 600, letterSpacing: '-0.025em', fontSize: 22, marginTop: 4 }}>Celebris Live Sessions</div>
               <div style={{ fontSize: 14, color: t.muted, marginTop: 2 }}>Sat 18 Oct · Grand Hall</div>
@@ -302,9 +335,9 @@ export default function App() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,380px),1fr))', gap: '24px 40px', alignItems: 'end', marginBottom: 40 }}>
               <div>
                 <div style={{ fontSize: 15, color: t.bandGold, marginBottom: 12 }}>Pick an occasion, then a step</div>
-                <h2 style={{ margin: 0, fontFamily: "'Bricolage Grotesque',sans-serif", fontWeight: 600, letterSpacing: '-0.04em', fontSize: 'clamp(44px,5.6vw,84px)', lineHeight: 0.95 }}>How it comes together</h2>
+                <h2 style={{ margin: 0, fontFamily: "'Bricolage Grotesque',sans-serif", fontWeight: 600, letterSpacing: '-0.04em', fontSize: 'clamp(36px,5.6vw,84px)', lineHeight: 0.95 }}>How it comes together</h2>
               </div>
-              <div style={{ display: 'flex', gap: 4, padding: 5, borderRadius: 999, border: `1px solid ${t.bandLine}`, justifySelf: 'end', flexWrap: 'wrap' }}>
+              <div className="cv-plan-tabs" style={{ display: 'flex', gap: 4, padding: 5, borderRadius: 999, border: `1px solid ${t.bandLine}`, justifySelf: 'end', flexWrap: 'wrap' }}>
                 {(['Wedding', 'Corporate', 'Concert'] as PlanTab[]).map(tab => (
                   <button key={tab} onClick={() => { picked.current = true; setPlanTab(tab); setPlanStep(0); }} style={{ padding: '11px 20px', borderRadius: 999, border: 'none', background: planTab === tab ? t.paper : 'transparent', color: planTab === tab ? t.ink : t.paper, fontSize: 15, cursor: 'pointer', transition: 'background 250ms' }}>
                     {tab}
@@ -330,7 +363,7 @@ export default function App() {
               </div>
 
               {/* Detail card */}
-              <div style={{ position: 'relative', minHeight: 460, borderRadius: 30, overflow: 'hidden', background: bandGrad, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: 16 }}>
+              <div style={{ position: 'relative', minHeight: 'clamp(380px,50vw,460px)', borderRadius: 30, overflow: 'hidden', background: bandGrad, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: 16 }}>
                 <div style={{ display: 'flex', gap: 6 }}>
                   {PLANS[planTab].map((_, i) => (
                     <span key={i} style={{ flex: 1, height: 4, borderRadius: 4, background: i <= stepIdx ? t.bandGold : t.bandLine, transition: 'background 400ms' }} />
@@ -357,7 +390,7 @@ export default function App() {
         {/* Occasions we plan */}
         <section style={{ padding: 'clamp(64px,8vw,120px) clamp(20px,4vw,64px)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', gap: 24, flexWrap: 'wrap', marginBottom: 36 }}>
-            <h2 style={{ margin: 0, fontFamily: "'Bricolage Grotesque',sans-serif", fontWeight: 600, letterSpacing: '-0.04em', fontSize: 'clamp(44px,5.6vw,84px)', lineHeight: 1 }}>Occasions we plan</h2>
+            <h2 style={{ margin: 0, fontFamily: "'Bricolage Grotesque',sans-serif", fontWeight: 600, letterSpacing: '-0.04em', fontSize: 'clamp(36px,5.6vw,84px)', lineHeight: 1 }}>Occasions we plan</h2>
             <button onClick={() => go('services')} style={{ background: 'none', border: 'none', borderBottom: `1px solid ${t.ink}`, padding: '4px 0', color: t.ink, fontSize: 16, cursor: 'pointer' }}>Services in detail</button>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(min(100%,300px),1fr))', gap: 16 }}>
@@ -374,7 +407,7 @@ export default function App() {
         {/* Open to the public */}
         <section style={{ padding: '0 clamp(20px,4vw,64px) clamp(64px,8vw,120px)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', gap: 24, flexWrap: 'wrap', marginBottom: 32 }}>
-            <h2 style={{ margin: 0, fontFamily: "'Bricolage Grotesque',sans-serif", fontWeight: 600, letterSpacing: '-0.04em', fontSize: 'clamp(44px,5.6vw,84px)', lineHeight: 1 }}>Open to the public</h2>
+            <h2 style={{ margin: 0, fontFamily: "'Bricolage Grotesque',sans-serif", fontWeight: 600, letterSpacing: '-0.04em', fontSize: 'clamp(36px,5.6vw,84px)', lineHeight: 1 }}>Open to the public</h2>
             <button onClick={() => go('events')} style={{ background: 'none', border: 'none', borderBottom: `1px solid ${t.ink}`, padding: '4px 0', color: t.ink, fontSize: 16, cursor: 'pointer' }}>All events</button>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,300px),1fr))', gap: 20 }}>
@@ -407,14 +440,14 @@ export default function App() {
         <section style={{ padding: 'clamp(48px,7vw,104px) clamp(20px,4vw,64px)' }}>
           <Pill>Public events we produce</Pill>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', gap: 24, flexWrap: 'wrap', margin: '20px 0 48px' }}>
-            <h1 style={{ margin: 0, fontFamily: "'Bricolage Grotesque',sans-serif", fontWeight: 600, letterSpacing: '-0.04em', fontSize: 'clamp(56px,8vw,128px)', lineHeight: 1 }}>Upcoming</h1>
+            <h1 style={{ margin: 0, fontFamily: "'Bricolage Grotesque',sans-serif", fontWeight: 600, letterSpacing: '-0.04em', fontSize: 'clamp(44px,8vw,128px)', lineHeight: 1 }}>Upcoming</h1>
             <FilterChips options={['All', 'Concert', 'Festival', 'Party', 'Corporate']} active={evFilter} onChange={setEvFilter} />
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {filteredEvents.map(e => (
               <div key={e.title} className="cv-event-row" style={{ display: 'grid', gridTemplateColumns: '120px minmax(0,1fr) auto', gap: 28, alignItems: 'center', padding: '16px 24px 16px 16px', borderRadius: 28, background: t.card, border: `1px solid ${t.line}`, transition: 'transform 300ms' }}>
-                <div style={{ textAlign: 'center', background: t.paper, borderRadius: 20, padding: '16px 8px' }}>
-                  <div style={{ fontFamily: "'Bricolage Grotesque',sans-serif", fontWeight: 600, letterSpacing: '-0.025em', fontSize: 56, lineHeight: 1 }}>{e.date}</div>
+                <div className="cv-event-date" style={{ textAlign: 'center', background: t.paper, borderRadius: 20, padding: '16px 8px' }}>
+                  <div style={{ fontFamily: "'Bricolage Grotesque',sans-serif", fontWeight: 600, letterSpacing: '-0.025em', fontSize: 'clamp(36px,8vw,56px)', lineHeight: 1 }}>{e.date}</div>
                   <div style={{ fontSize: 12, color: t.gold, marginTop: 4 }}>{e.day}</div>
                 </div>
                 <div style={{ minWidth: 0 }}>
@@ -422,7 +455,7 @@ export default function App() {
                   <div style={{ fontFamily: "'Bricolage Grotesque',sans-serif", fontWeight: 600, letterSpacing: '-0.025em', fontSize: 'clamp(28px,3.2vw,42px)', lineHeight: 1.1, marginTop: 6 }}>{e.title}</div>
                   <div style={{ fontSize: 16, fontWeight: 300, color: t.body, marginTop: 6 }}>{e.lineup}</div>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 10 }}>
+                <div className="cv-event-action" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 10 }}>
                   <div style={{ fontSize: 15, color: t.muted }}>{e.price}</div>
                   <button onClick={e.onTicket} style={{ padding: '12px 22px', borderRadius: 999, border: `1px solid ${t.ink}`, background: e.btnBg, color: e.btnFg, fontSize: 15, cursor: 'pointer', whiteSpace: 'nowrap' }}>{e.btnLabel}</button>
                 </div>
@@ -442,7 +475,7 @@ export default function App() {
       {page === 'services' && (
         <section style={{ padding: 'clamp(48px,7vw,104px) clamp(20px,4vw,64px)' }}>
           <Pill>Services</Pill>
-          <h1 style={{ margin: '20px 0 64px', fontFamily: "'Bricolage Grotesque',sans-serif", fontWeight: 600, letterSpacing: '-0.04em', fontSize: 'clamp(56px,8vw,128px)', lineHeight: 1, maxWidth: 1100 }}>
+          <h1 style={{ margin: '20px 0 64px', fontFamily: "'Bricolage Grotesque',sans-serif", fontWeight: 600, letterSpacing: '-0.04em', fontSize: 'clamp(44px,8vw,128px)', lineHeight: 1, maxWidth: 1100 }}>
             You host. We take care of the rest.
           </h1>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -479,7 +512,7 @@ export default function App() {
         <section style={{ padding: 'clamp(48px,7vw,104px) clamp(20px,4vw,64px)' }}>
           <Pill>Past events</Pill>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', gap: 24, flexWrap: 'wrap', margin: '20px 0 48px' }}>
-            <h1 style={{ margin: 0, fontFamily: "'Bricolage Grotesque',sans-serif", fontWeight: 600, letterSpacing: '-0.04em', fontSize: 'clamp(56px,8vw,128px)', lineHeight: 1 }}>Our work</h1>
+            <h1 style={{ margin: 0, fontFamily: "'Bricolage Grotesque',sans-serif", fontWeight: 600, letterSpacing: '-0.04em', fontSize: 'clamp(44px,8vw,128px)', lineHeight: 1 }}>Our work</h1>
             <FilterChips options={['All', 'Weddings', 'Corporate', 'Concerts', 'Private']} active={galFilter} onChange={setGalFilter} />
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(min(100%,280px),1fr))', gap: '40px 20px' }}>
@@ -500,7 +533,7 @@ export default function App() {
       {page === 'artists' && (
         <section style={{ padding: 'clamp(48px,7vw,104px) clamp(20px,4vw,64px)' }}>
           <Pill>Artists, DJs and hosts we book</Pill>
-          <h1 style={{ margin: '20px 0 56px', fontFamily: "'Bricolage Grotesque',sans-serif", fontWeight: 600, letterSpacing: '-0.04em', fontSize: 'clamp(56px,8vw,128px)', lineHeight: 1 }}>The roster</h1>
+          <h1 style={{ margin: '20px 0 56px', fontFamily: "'Bricolage Grotesque',sans-serif", fontWeight: 600, letterSpacing: '-0.04em', fontSize: 'clamp(44px,8vw,128px)', lineHeight: 1 }}>The roster</h1>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(min(100%,240px),1fr))', gap: '40px 20px' }}>
             {ROSTER.map((a, i) => (
               <button key={a.name} onClick={() => setArtistIdx(i)} style={{ background: 'none', border: 'none', color: t.ink, textAlign: 'left', cursor: 'pointer', padding: 0, display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -521,18 +554,18 @@ export default function App() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,420px),1fr))', gap: 64, alignItems: 'center' }}>
             <div>
               <Pill>About</Pill>
-              <h1 style={{ margin: '20px 0 0', fontFamily: "'Bricolage Grotesque',sans-serif", fontWeight: 600, letterSpacing: '-0.04em', fontSize: 'clamp(52px,7vw,112px)', lineHeight: 1 }}>
+              <h1 style={{ margin: '20px 0 0', fontFamily: "'Bricolage Grotesque',sans-serif", fontWeight: 600, letterSpacing: '-0.04em', fontSize: 'clamp(42px,7vw,112px)', lineHeight: 1 }}>
                 Creating vibes, celebrating life.
               </h1>
               <p style={{ margin: '32px 0 0', fontSize: 20, fontWeight: 300, lineHeight: 1.6, color: t.body, maxWidth: 560 }}>
                 Celebris Vibe plans a 40-guest birthday with the same care as a 5,000-ticket concert. The person you meet on the first call is the person running your event on the night.
               </p>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'center', padding: 56, borderRadius: 28, background: t.card, border: `1px solid ${t.line}` }}>
-              <img src="/assets/celebris-logo.png" alt="Celebris Vibe logo" style={{ width: 'min(100%,300px)', filter: t.logo }} />
+            <div style={{ display: 'flex', justifyContent: 'center', padding: 'clamp(28px,6vw,56px)', borderRadius: 28, background: t.card, border: `1px solid ${t.line}` }}>
+              <img src={LOGO} alt="Celebris Vibe logo" style={{ width: 'min(100%,300px)', filter: t.logo }} />
             </div>
           </div>
-          <h2 style={{ margin: '104px 0 36px', fontFamily: "'Bricolage Grotesque',sans-serif", fontWeight: 600, letterSpacing: '-0.04em', fontSize: 'clamp(40px,5vw,72px)', lineHeight: 1 }}>The team</h2>
+          <h2 style={{ margin: 'clamp(64px,10vw,104px) 0 36px', fontFamily: "'Bricolage Grotesque',sans-serif", fontWeight: 600, letterSpacing: '-0.04em', fontSize: 'clamp(40px,5vw,72px)', lineHeight: 1 }}>The team</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(min(100%,220px),1fr))', gap: 20 }}>
             {TEAM.map(m => (
               <div key={m.name} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -552,7 +585,7 @@ export default function App() {
         <section style={{ padding: 'clamp(48px,7vw,104px) clamp(20px,4vw,64px)', display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,420px),1fr))', gap: 64 }}>
           <div>
             <Pill>Contact</Pill>
-            <h1 style={{ margin: '20px 0 0', fontFamily: "'Bricolage Grotesque',sans-serif", fontWeight: 600, letterSpacing: '-0.04em', fontSize: 'clamp(52px,7vw,112px)', lineHeight: 1 }}>Tell us the date.</h1>
+            <h1 style={{ margin: '20px 0 0', fontFamily: "'Bricolage Grotesque',sans-serif", fontWeight: 600, letterSpacing: '-0.04em', fontSize: 'clamp(42px,7vw,112px)', lineHeight: 1 }}>Tell us the date.</h1>
             <p style={{ margin: '28px 0 0', fontSize: 19, fontWeight: 300, lineHeight: 1.55, color: t.body, maxWidth: 440 }}>
               Send a few details or ask for a call. A planner replies within one working day.
             </p>
@@ -662,13 +695,13 @@ export default function App() {
       {artistIdx != null && artist && (
         <div onClick={() => setArtistIdx(null)} style={{ position: 'fixed', inset: 0, zIndex: 50, background: 'rgba(27,29,34,0.55)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
           <div onClick={e => e.stopPropagation()} style={{ width: 'min(880px,100%)', maxHeight: '90vh', overflow: 'auto', borderRadius: 28, background: t.paper, display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,300px),1fr))' }}>
-            <div style={{ minHeight: 380, background: grad, display: 'flex', alignItems: 'flex-end', padding: 16 }}>
+            <div style={{ minHeight: 'clamp(220px,40vw,380px)', background: grad, display: 'flex', alignItems: 'flex-end', padding: 16 }}>
               <span style={{ fontSize: 11, color: t.faint }}>artist photo</span>
             </div>
-            <div style={{ padding: 36, display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <div style={{ padding: 'clamp(22px,5vw,36px)', display: 'flex', flexDirection: 'column', gap: 16 }}>
               <button onClick={() => setArtistIdx(null)} aria-label="Close" style={{ alignSelf: 'flex-end', background: 'none', border: `1px solid ${t.field}`, color: t.ink, width: 40, height: 40, borderRadius: '50%', cursor: 'pointer', fontSize: 18 }}>×</button>
               <div style={{ fontSize: 13, color: t.gold }}>{artist.role}</div>
-              <div style={{ fontFamily: "'Bricolage Grotesque',sans-serif", fontWeight: 600, letterSpacing: '-0.025em', fontSize: 52, lineHeight: 1 }}>{artist.name}</div>
+              <div style={{ fontFamily: "'Bricolage Grotesque',sans-serif", fontWeight: 600, letterSpacing: '-0.025em', fontSize: 'clamp(36px,7vw,52px)', lineHeight: 1 }}>{artist.name}</div>
               <p style={{ margin: 0, fontSize: 18, fontWeight: 300, lineHeight: 1.55, color: t.body }}>{artist.bio}</p>
               <div style={{ fontSize: 15, color: t.muted }}>{artist.genres.join(', ')}</div>
               <button onClick={() => go('contact', { mode: 'inquiry', type: 'Artist booking', note: `We would like to book ${artist.name}.` })} style={{ marginTop: 'auto', alignSelf: 'flex-start', padding: '15px 26px', border: 'none', borderRadius: 999, background: t.ink, color: t.paper, fontSize: 15, cursor: 'pointer' }}>
@@ -682,7 +715,7 @@ export default function App() {
       {/* ════════════════════════════════════════════ FOOTER ══════════════════ */}
       <footer style={{ padding: '56px clamp(20px,4vw,64px) 32px', borderTop: `1px solid ${t.line}` }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', gap: 32, flexWrap: 'wrap', alignItems: 'flex-start' }}>
-          <img src="/assets/celebris-logo.png" alt="Celebris Vibe" style={{ height: 120, filter: t.logo }} />
+          <img src={LOGO} alt="Celebris Vibe" style={{ height: 'clamp(80px,14vw,120px)', filter: t.logo }} />
           <div style={{ display: 'flex', gap: '4px 8px', flexWrap: 'wrap', maxWidth: 560 }}>
             {PAGES.map(([k, label]) => (
               <button key={k} onClick={() => go(k)} style={{ background: 'none', border: 'none', color: t.body, cursor: 'pointer', padding: '6px 10px', fontSize: 15 }}>{label}</button>
