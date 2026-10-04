@@ -1,0 +1,19 @@
+# Astro
+dist/
+.astro/
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Env
+.env
+.env.*
+!.env.example
+
+# Claude local settings
+.claude/
+
+# OS
+.DS_Store
+Thumbs.db
