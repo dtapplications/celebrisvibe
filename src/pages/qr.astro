@@ -1,5 +1,8 @@
 ---
 import QRCode from 'qrcode';
+import '@fontsource/jost/300.css';
+import '@fontsource/jost/500.css';
+import '@fontsource/bricolage-grotesque/600.css';
 
 const CONTACT_URL = 'https://dtapplications.github.io/celebrisvibe/#contact';
 const qrSvg = await QRCode.toString(CONTACT_URL, {
@@ -11,13 +14,14 @@ const qrSvg = await QRCode.toString(CONTACT_URL, {
 ---
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bg">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Контакт — Celebris Vibe</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/celebrisvibe/assets/favicon.png" />
+  <link rel="icon" type="image/svg+xml" href="/celebrisvibe/assets/favicon.svg" />
+  <link rel="apple-touch-icon" href="/celebrisvibe/assets/apple-touch-icon.png" />
+  <title>Контакти - Celebris Vibe</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; }
     body {
@@ -113,7 +117,7 @@ const qrSvg = await QRCode.toString(CONTACT_URL, {
 </head>
 <body>
   <div class="card">
-    <img src="/celebrisvibe/assets/celebris-logo-color.png" alt="Celebris Vibe" class="logo" />
+    <img src="/celebrisvibe/assets/celebris-logo-dark.png" alt="Celebris Vibe" class="logo" />
 
     <div class="qr-wrap">
       <Fragment set:html={qrSvg} />

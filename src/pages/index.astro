@@ -1,17 +1,24 @@
 ---
 import App from '../components/App';
-const base = import.meta.env.BASE_URL;
+import '@fontsource/jost/300.css';
+import '@fontsource/jost/400.css';
+import '@fontsource/jost/500.css';
+import '@fontsource/jost/600.css';
+import '@fontsource/bricolage-grotesque/600.css';
+import '@fontsource/bricolage-grotesque/700.css';
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 ---
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bg">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Celebris Vibe — DJ · MC · Озвучаване · Осветление</title>
-  <link rel="icon" href={`${base}assets/favicon.png`} />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
-  <style>
+  <title>Celebris Vibe - DJ · Водещ · Озвучаване · Осветление</title>
+  <link rel="icon" type="image/png" sizes="32x32" href={`${base}assets/favicon.png`} />
+  <link rel="icon" type="image/svg+xml" href={`${base}assets/favicon.svg`} />
+  <link rel="apple-touch-icon" href={`${base}assets/apple-touch-icon.png`} />
+  <link rel="sitemap" type="application/xml" href={`${base}sitemap.xml`} />
+  <style is:global>
     *, *::before, *::after { box-sizing: border-box; }
     html, body { margin: 0; padding: 0; }
     body {
@@ -31,12 +38,71 @@ const base = import.meta.env.BASE_URL;
       from { transform: rotate(0deg); }
       to { transform: rotate(360deg); }
     }
+    /* Five extras in one row on wide screens, so none is left alone on a row */
+    @media (min-width: 1400px) {
+      .cv-extras { grid-template-columns: repeat(5, minmax(0, 1fr)) !important; }
+    }
+
+    /* Occasion cards: photo reveal on hover/focus */
+    .cv-occasion { transition: transform 350ms ease, border-color 350ms ease, box-shadow 350ms ease; }
+    .cv-occasion-img {
+      position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+      opacity: 0; transform: scale(1.08); transition: opacity 450ms ease, transform 700ms ease;
+    }
+    .cv-occasion-shade {
+      position: absolute; inset: 0; opacity: 0; transition: opacity 450ms ease;
+      background: linear-gradient(to top, rgba(12,12,14,0.94) 20%, rgba(12,12,14,0.55));
+    }
+    .cv-occ-title, .cv-occ-desc, .cv-occ-chip, .cv-occ-go { transition: color 350ms ease, background 350ms ease, border-color 350ms ease, transform 350ms ease; }
+    .cv-occasion:hover, .cv-occasion:focus-visible {
+      transform: translateY(-6px);
+      border-color: var(--cv-gold) !important;
+      box-shadow: 0 30px 60px -30px rgba(0,0,0,0.55);
+    }
+    .cv-occasion:hover .cv-occasion-img, .cv-occasion:focus-visible .cv-occasion-img { opacity: 1; transform: scale(1); }
+    .cv-occasion:hover .cv-occasion-shade, .cv-occasion:focus-visible .cv-occasion-shade { opacity: 1; }
+    .cv-occasion:hover .cv-occ-title, .cv-occasion:focus-visible .cv-occ-title { color: #f2f1ec !important; }
+    .cv-occasion:hover .cv-occ-desc, .cv-occasion:focus-visible .cv-occ-desc { color: #d6d5d0 !important; }
+    .cv-occasion:hover .cv-occ-chip, .cv-occasion:focus-visible .cv-occ-chip { background: rgba(255,255,255,0.12) !important; color: #e3c995 !important; }
+    .cv-occasion:hover .cv-occ-go, .cv-occasion:focus-visible .cv-occ-go {
+      background: #c9ad78; border-color: #c9ad78 !important; color: #1b1d22 !important; transform: translateX(4px);
+    }
+
+    /* Hero backdrop */
+    .cv-hero > :not(.cv-hero-bg) { position: relative; z-index: 1; }
+    @keyframes cvBeam {
+      from { transform: rotate(-14deg); }
+      to { transform: rotate(14deg); }
+    }
+    @keyframes cvBokeh {
+      0%, 100% { opacity: 0; transform: translateY(0) scale(0.8); }
+      50% { opacity: var(--cv-o, 0.5); transform: translateY(-28px) scale(1); }
+    }
+    @keyframes cvEq {
+      from { transform: scaleY(0.12); }
+      to { transform: scaleY(1); }
+    }
+    @media (max-width: 640px) {
+      .cv-hero-bg > div:not(:last-child):nth-child(2n) { display: none; }
+    }
     @media (prefers-reduced-motion: reduce) {
+      .cv-hero-bg span { opacity: 0.25 !important; }
+
       * { transition: none !important; animation: none !important; }
     }
     /* Hover effects driven by CSS custom properties set on the wrapper */
     .cv-btn-primary:hover {
       background: var(--cv-gold) !important;
+    }
+    .cv-day:hover {
+      background: rgba(201,173,120,0.2) !important;
+    }
+    .cv-navlink:hover {
+      color: var(--cv-ink) !important;
+    }
+    .cv-social:hover {
+      color: var(--cv-gold) !important;
+      border-color: var(--cv-gold) !important;
     }
     .cv-card:hover {
       transform: translateY(-4px) !important;
@@ -48,6 +114,19 @@ const base = import.meta.env.BASE_URL;
     }
     .cv-event-row:hover {
       transform: translateY(-2px) !important;
+    }
+
+    /* Responsive overrides (inline styles need !important) */
+    @media (max-width: 900px) {
+      .cv-nav, .cv-header-cta { display: none !important; }
+      .cv-menu-btn { display: flex !important; }
+      .cv-theme-btn { margin-left: auto; }
+    }
+    @media (max-width: 640px) {
+      .cv-header-logo { height: 48px !important; }
+      .cv-plan-tabs { justify-self: stretch !important; flex-wrap: nowrap !important; }
+      .cv-plan-tabs > button { flex: 1; padding: 10px 6px !important; font-size: 14px !important; }
+      .cv-next-event { right: 0 !important; bottom: 0 !important; padding: 12px 16px !important; }
     }
   </style>
 </head>
