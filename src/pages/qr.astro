@@ -1,10 +1,12 @@
 ---
 import QRCode from 'qrcode';
+import { abs } from '../lib/urls';
 import '@fontsource/jost/300.css';
 import '@fontsource/jost/500.css';
 import '@fontsource/bricolage-grotesque/600.css';
 
-const CONTACT_URL = 'https://dtapplications.github.io/celebrisvibe/#contact';
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+const CONTACT_URL = abs(Astro.site, '#contact');
 const qrSvg = await QRCode.toString(CONTACT_URL, {
   type: 'svg',
   margin: 2,
@@ -18,9 +20,9 @@ const qrSvg = await QRCode.toString(CONTACT_URL, {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="icon" type="image/png" sizes="32x32" href="/celebrisvibe/assets/favicon.png" />
-  <link rel="icon" type="image/svg+xml" href="/celebrisvibe/assets/favicon.svg" />
-  <link rel="apple-touch-icon" href="/celebrisvibe/assets/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href={`${base}assets/favicon.png`} />
+  <link rel="icon" type="image/svg+xml" href={`${base}assets/favicon.svg`} />
+  <link rel="apple-touch-icon" href={`${base}assets/apple-touch-icon.png`} />
   <title>Контакти - Celebris Vibe</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; }
@@ -117,7 +119,7 @@ const qrSvg = await QRCode.toString(CONTACT_URL, {
 </head>
 <body>
   <div class="card">
-    <img src="/celebrisvibe/assets/celebris-logo-dark.png" alt="Celebris Vibe" class="logo" />
+    <img src={`${base}assets/celebris-logo-dark.png`} alt="Celebris Vibe" class="logo" />
 
     <div class="qr-wrap">
       <Fragment set:html={qrSvg} />
@@ -132,10 +134,10 @@ const qrSvg = await QRCode.toString(CONTACT_URL, {
 
     <div class="btn-row">
       <button class="btn btn-solid" onclick="window.print()">Принтирай / Запази като PDF</button>
-      <a href="/celebrisvibe/#contact" class="btn btn-outline">Отвори формата</a>
+      <a href={`${base}#contact`} class="btn btn-outline">Отвори формата</a>
     </div>
   </div>
 
-  <p class="footer-note">© 2026 Celebris Vibe · <a href="/celebrisvibe/">celebrisvibe.com</a> · Създаваме Вайб, Честваме Живота.</p>
+  <p class="footer-note">© 2026 Celebris Vibe · <a href={base}>celebrisvibe.com</a> · Създаваме Вайб, Честваме Живота.</p>
 </body>
 </html>
