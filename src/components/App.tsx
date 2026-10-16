@@ -14,7 +14,7 @@ interface Theme {
   muted: string; faint: string; gold: string; frame: string;
   bandLine: string; bandText: string; bandGold: string;
   bandS1: string; bandS2: string; bandActive: string;
-  logo: string; dot: string;
+  dot: string;
 }
 
 // ─── Theme tokens ─────────────────────────────────────────────────────────────
@@ -26,7 +26,7 @@ const LIGHT: Theme = {
   faint: '#7b7d84', gold: '#8a6d3b', frame: '#c9ad78',
   bandLine: '#4a4c54', bandText: '#c4c5ca', bandGold: '#c9ad78',
   bandS1: '#26282e', bandS2: '#2d2f36', bandActive: '#2a2c33',
-  logo: 'none', dot: 'transparent',
+  dot: 'transparent',
 };
 
 const DARK: Theme = {
@@ -36,7 +36,7 @@ const DARK: Theme = {
   faint: '#74767d', gold: '#c9ad78', frame: '#8a6d3b',
   bandLine: '#c9c7be', bandText: '#3e4048', bandGold: '#8a6d3b',
   bandS1: '#d8d6ce', bandS2: '#e0ded7', bandActive: '#ffffff',
-  logo: 'invert(1)', dot: '#eceae3',
+  dot: '#eceae3',
 };
 
 // ─── Static data ──────────────────────────────────────────────────────────────
@@ -159,7 +159,9 @@ export default function App({ base = '/' }: { base?: string }) {
   const [dateStatus, setDateStatus]   = useState<'idle' | 'available' | 'taken'>('idle');
 
   const t = isDark ? DARK : LIGHT;
-  const logo = `${base}assets/celebris-logo.png`;
+  const logo = isDark
+    ? `${base}assets/celebris-logo-light.png`
+    : `${base}assets/celebris-logo-dark.png`;
 
   // Hash routing
   useEffect(() => {
@@ -208,7 +210,7 @@ export default function App({ base = '/' }: { base?: string }) {
       {/* ── HEADER ── */}
       <header style={{ position: 'sticky', top: 12, zIndex: 30, margin: '12px clamp(12px,2vw,24px) 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, padding: '8px 8px 8px 18px', background: t.headerBg, backdropFilter: 'blur(14px)', border: `1px solid ${t.line}`, borderRadius: 999, flexWrap: 'nowrap' }}>
         <button onClick={() => go('home')} style={{ flex: 'none', display: 'flex', alignItems: 'center', background: 'none', border: 'none', color: t.ink, cursor: 'pointer', padding: 0 }}>
-          <img src={logo} alt="Celebris Vibe" style={{ height: 42, filter: t.logo }} />
+          <img src={logo} alt="Celebris Vibe" style={{ height: 42 }} />
         </button>
 
         <nav style={{ display: 'flex', gap: 2, flexWrap: 'nowrap', flex: '1 1 auto', minWidth: 0, overflowX: 'auto', justifyContent: 'center', scrollbarWidth: 'none' } as CSSProperties}>
@@ -255,7 +257,7 @@ export default function App({ base = '/' }: { base?: string }) {
                 <span style={{ fontSize: 12, color: t.faint }}>снимка: атмосфера на събитие</span>
               </div>
               <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none', animation: 'cvspin 90s linear infinite' }}>
-                <img src={logo} alt="" style={{ position: 'absolute', width: '273%', left: '-86.8%', top: '-72.2%', maxWidth: 'none', filter: t.logo }} />
+                <img src={logo} alt="" style={{ position: 'absolute', width: '273%', left: '-86.8%', top: '-72.2%', maxWidth: 'none' }} />
               </div>
               <button onClick={() => go('contact')} style={{ position: 'absolute', right: -4, bottom: '6%', padding: '16px 20px', background: t.paper, border: `1px solid ${t.line}`, borderRadius: 20, boxShadow: '0 24px 48px -24px rgba(0,0,0,0.35)', textAlign: 'left', cursor: 'pointer', color: t.ink }}>
                 <div style={{ fontSize: 11, color: t.gold }}>Провери наличност</div>
@@ -464,7 +466,7 @@ export default function App({ base = '/' }: { base?: string }) {
 
               {/* About mini */}
               <div style={{ marginTop: 56, paddingTop: 40, borderTop: `1px solid ${t.line}` }}>
-                <img src={logo} alt="Celebris Vibe" style={{ height: 48, filter: t.logo, marginBottom: 20 }} />
+                <img src={logo} alt="Celebris Vibe" style={{ height: 48, marginBottom: 20 }} />
                 <p style={{ margin: 0, fontSize: 17, fontWeight: 300, lineHeight: 1.6, color: t.body, maxWidth: 400 }}>
                   Celebris Vibe е изграден на идеята, че доброто събитие е повече от музика — това е правилната атмосфера в правилния момент. Подхождаме към всяко събитие индивидуално.
                 </p>
@@ -598,7 +600,7 @@ export default function App({ base = '/' }: { base?: string }) {
       {/* ── FOOTER ── */}
       <footer style={{ padding: '56px clamp(20px,4vw,64px) 32px', borderTop: `1px solid ${t.line}` }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', gap: 32, flexWrap: 'wrap', alignItems: 'flex-start' }}>
-          <img src={logo} alt="Celebris Vibe" style={{ height: 100, filter: t.logo }} />
+          <img src={logo} alt="Celebris Vibe" style={{ height: 100 }} />
           <div style={{ display: 'flex', gap: '4px 8px', flexWrap: 'wrap', maxWidth: 480 }}>
             {PAGES.map(([k, label]) => (
               <button key={k} onClick={() => go(k)} style={{ background: 'none', border: 'none', color: t.body, cursor: 'pointer', padding: '6px 10px', fontSize: 15 }}>{label}</button>
