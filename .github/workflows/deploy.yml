@@ -25,6 +25,9 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+        env:
+          PUBLIC_WEB3FORMS_KEY: ${{ secrets.FORMSSECRET }}
+          PUBLIC_BOOKED_DATES_CSV_URL: ${{ secrets.BOOKED_DATES_CSV_URL }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist/
