@@ -1,0 +1,5 @@
+---
+// Tells Cloudflare not to rewrite email addresses inside (Scrape Shield "Email Address
+// Obfuscation"), so the deployed HTML stays identical to the build.
+---
+<Fragment set:html="<!--email_off-->" /><slot /><Fragment set:html="<!--/email_off-->" />

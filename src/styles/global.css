@@ -241,7 +241,7 @@ textarea.input { resize: vertical; }
 }
 .reveal-card .shade {
   position: absolute; inset: 0; opacity: 0; transition: opacity 450ms ease;
-  background: linear-gradient(to top, rgba(12,12,14,0.94) 20%, rgba(12,12,14,0.55));
+  background: linear-gradient(rgba(12,12,14,0.55), rgba(12,12,14,0.94) 80%);
 }
 .reveal-card :is(.title, .desc, .chip, .go) { transition: color 350ms ease, background 350ms ease, border-color 350ms ease, transform 350ms ease; }
 .reveal-card:is(:hover, :focus-visible) {

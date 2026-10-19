@@ -1,23 +1,20 @@
 ---
 import { Image } from 'astro:assets';
-import { getCollection, render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import Icon from '../../components/Icon.astro';
 import CtaBand from '../../components/CtaBand.astro';
 import { ROUTES, SITE_NAME } from '../../data/site';
+import { SERVICES, serviceUrl, type Service } from '../../data/services';
 import { abs, href } from '../../lib/urls';
 import { photo } from '../../lib/photos';
 
 export async function getStaticPaths() {
-  const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
-  return services.map((entry, i) => ({ params: { slug: entry.id }, props: { entry, index: i, all: services } }));
+  return SERVICES.map((service, index) => ({ params: { slug: service.slug }, props: { service, index } }));
 }
 
-const { entry, index, all } = Astro.props;
-const s = entry.data;
-const { Content } = await render(entry);
-const others = all.filter(o => o.id !== entry.id);
-const url = abs(Astro.site, `${ROUTES.services}${entry.id}/`);
+const { service: s, index } = Astro.props as { service: Service; index: number };
+const others = SERVICES.filter(o => o.slug !== s.slug);
+const url = abs(Astro.site, serviceUrl(s.slug));
 
 const schema = [
   {
@@ -51,7 +48,7 @@ const schema = [
       <div>
         <div class="num">0{index + 1}</div>
         <h1 class="h2-sm" style="margin-top:10px">{s.title}</h1>
-        <div class="prose"><Content /></div>
+        <p class="lead-text">{s.description}</p>
 
         <h2 class="label">Какво включва</h2>
         <ul class="check-list">{s.includes.map(item => <li>{item}</li>)}</ul>
@@ -92,10 +89,10 @@ const schema = [
     <h2 class="h2-sm stack-gap">Други услуги</h2>
     <div class="others">
       {others.map(o => (
-        <a href={href(`${ROUTES.services}${o.id}/`)} class="card other lift">
+        <a href={href(serviceUrl(o.slug))} class="card other lift">
           <span>
-            <span class="display other-title">{o.data.title}</span>
-            <span class="other-desc">{o.data.intro}</span>
+            <span class="display other-title">{o.title}</span>
+            <span class="other-desc">{o.intro}</span>
           </span>
           <span class="go"><Icon name="arrowRight" /></span>
         </a>
@@ -115,14 +112,14 @@ const schema = [
   .crumbs a:hover { color: var(--gold); }
   .top { align-items: start; }
   .num { font-family: var(--font-display); font-weight: 700; font-size: 15px; color: var(--gold); }
-  .prose :global(p) { margin: 24px 0 0; font-size: 19px; font-weight: 300; line-height: 1.6; color: var(--body); }
+  .lead-text { margin: 24px 0 0; font-size: 19px; font-weight: 300; line-height: 1.6; color: var(--body); }
   .label { margin: 32px 0 0; font-size: 14px; font-weight: 500; color: var(--muted); }
 
   .figure { margin: 0; aspect-ratio: 4 / 3; border-radius: 32px; }
   figcaption {
     position: absolute; left: 0; right: 0; bottom: 0;
     padding: clamp(56px, 7vw, 96px) clamp(24px, 3vw, 40px) clamp(24px, 3vw, 36px);
-    background: linear-gradient(to top, rgba(10,10,12,0.9) 0%, rgba(10,10,12,0.55) 55%, transparent);
+    background: linear-gradient(transparent, rgba(10,10,12,0.55) 45%, rgba(10,10,12,0.9));
   }
   blockquote {
     margin: 0; padding-left: 20px; border-left: 3px solid #c9ad78; letter-spacing: -0.02em;

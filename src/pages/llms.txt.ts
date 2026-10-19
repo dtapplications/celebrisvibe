@@ -1,13 +1,12 @@
 import type { APIRoute } from 'astro';
-import { getCollection } from 'astro:content';
 import { CONTACT_EMAIL, CONTACT_PHONE, EVENT_TYPES, ROUTES } from '../data/site';
+import { SERVICES as services, serviceUrl } from '../data/services';
 import { abs, textResponse } from '../lib/urls';
 
 // Index for AI assistants, following https://llmstxt.org
-export const GET: APIRoute = async ({ site }) => {
-  const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
+export const GET: APIRoute = ({ site }) => {
   const events = EVENT_TYPES.map(e => e.title.toLowerCase());
-  const titles = services.map(s => s.data.title).join(', ');
+  const titles = services.map(s => s.title).join(', ');
 
   return textResponse(`# Celebris Vibe
 
@@ -25,7 +24,7 @@ export const GET: APIRoute = async ({ site }) => {
 
 ## Услуги
 
-${services.map(s => `- [${s.data.title}](${abs(site, `${ROUTES.services}${s.id}/`)}): ${s.data.description}`).join('\n')}
+${services.map(s => `- [${s.title}](${abs(site, serviceUrl(s.slug))}): ${s.description}`).join('\n')}
 
 ## Контакт
 

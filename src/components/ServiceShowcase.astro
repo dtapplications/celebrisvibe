@@ -1,26 +1,25 @@
 ---
 import { Image } from 'astro:assets';
-import { getCollection } from 'astro:content';
 import Icon from './Icon.astro';
 import { ROUTES } from '../data/site';
+import { SERVICES as services, serviceUrl } from '../data/services';
 import { href } from '../lib/urls';
 import { photo } from '../lib/photos';
 
 // Every service and highlight is rendered into the HTML (so search engines and agents
 // see all of it); the script only switches which one is visible.
-const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
 ---
 <div class="band" data-showcase>
   <div class="head">
     {services.map((s, i) => (
       <div data-panel={i} hidden={i > 0}>
-        <div class="intro">{s.data.intro}</div>
-        <h2 class="h2 title"><a href={href(`${ROUTES.services}${s.id}/`)}>{s.data.title}</a></h2>
+        <div class="intro">{s.intro}</div>
+        <h2 class="h2 title"><a href={href(serviceUrl(s.slug))}>{s.title}</a></h2>
       </div>
     ))}
     <div class="tabs" role="tablist" aria-label="Услуги">
       {services.map((s, i) => (
-        <button type="button" role="tab" data-tab={i} aria-selected={i === 0 ? 'true' : 'false'}>{s.data.title}</button>
+        <button type="button" role="tab" data-tab={i} aria-selected={i === 0 ? 'true' : 'false'}>{s.title}</button>
       ))}
     </div>
   </div>
@@ -28,7 +27,7 @@ const services = (await getCollection('services')).sort((a, b) => a.data.order -
   {services.map((s, si) => (
     <div class="body" data-panel={si} hidden={si > 0}>
       <div class="steps">
-        {s.data.highlights.map((h, i) => (
+        {s.highlights.map((h, i) => (
           <button type="button" class="step" data-step={i} aria-pressed={i === 0 ? 'true' : 'false'}>
             <span class="step-num">{i + 1}</span>
             <span class="step-occ">{h.occasions.join(' · ')}</span>
@@ -39,24 +38,24 @@ const services = (await getCollection('services')).sort((a, b) => a.data.order -
       </div>
 
       <div class="stage">
-        {s.data.highlights.map((h, i) => (
+        {s.highlights.map((h, i) => (
           <Image src={photo(h.photo)} alt={h.title} data-step={i} class:list={['stage-img', i === 0 && 'is-on']} widths={[480, 800, 1200]} sizes="(min-width: 900px) 45vw, 100vw" />
         ))}
         <div class="bars">
-          {s.data.highlights.map((_, i) => <span data-step={i} class:list={[i === 0 && 'is-on']} />)}
+          {s.highlights.map((_, i) => <span data-step={i} class:list={[i === 0 && 'is-on']} />)}
         </div>
-        {s.data.highlights.map((h, i) => (
+        {s.highlights.map((h, i) => (
           <div class="detail" data-step={i} hidden={i > 0}>
             <div class="detail-top">
               <div class="tags">{h.occasions.map(o => <span class="tag">{o}</span>)}</div>
-              <span class="count">{i + 1} от {s.data.highlights.length}</span>
+              <span class="count">{i + 1} от {s.highlights.length}</span>
             </div>
             <h3 class="display detail-title">{h.title}</h3>
             <p class="detail-desc">{h.desc}</p>
             <div class="detail-nav">
               <button type="button" class="nav-btn" data-move="-1" aria-label="Предишна"><Icon name="arrowLeft" /></button>
               <button type="button" class="nav-btn solid" data-move="1" aria-label="Следваща"><Icon name="arrowRight" /></button>
-              <a href={href(ROUTES.contact)} data-draft={JSON.stringify({ mode: 'inquiry', services: s.data.formServices })} class="text-link ask">Запитване</a>
+              <a href={href(ROUTES.contact)} data-draft={JSON.stringify({ mode: 'inquiry', services: s.formServices })} class="text-link ask">Запитване</a>
             </div>
           </div>
         ))}

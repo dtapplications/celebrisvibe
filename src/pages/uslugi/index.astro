@@ -1,6 +1,5 @@
 ---
 import { Image } from 'astro:assets';
-import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import Eyebrow from '../../components/Eyebrow.astro';
 import HeroBackdrop from '../../components/HeroBackdrop.astro';
@@ -9,11 +8,10 @@ import Occasions from '../../components/Occasions.astro';
 import Extras from '../../components/Extras.astro';
 import CtaBand from '../../components/CtaBand.astro';
 import { ROUTES, SERVICE_GUIDE } from '../../data/site';
+import { SERVICES as services, serviceUrl } from '../../data/services';
 import { abs, href } from '../../lib/urls';
 import { photo } from '../../lib/photos';
 
-const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
-const serviceUrl = (id: string) => `${ROUTES.services}${id}/`;
 
 const schema = [
   {
@@ -22,8 +20,8 @@ const schema = [
     itemListElement: services.map((s, i) => ({
       '@type': 'ListItem',
       position: i + 1,
-      url: abs(Astro.site, serviceUrl(s.id)),
-      name: s.data.title,
+      url: abs(Astro.site, serviceUrl(s.slug)),
+      name: s.title,
     })),
   },
   {
@@ -57,14 +55,14 @@ const schema = [
 
       <nav aria-label="Услуги" class="index">
         {services.map((s, i) => (
-          <a href={href(serviceUrl(s.id))} class="reveal-card item">
-            <Image src={photo(s.data.photo)} alt="" widths={[480, 800]} sizes="(min-width: 1000px) 580px, 100vw" />
+          <a href={href(serviceUrl(s.slug))} class="reveal-card item">
+            <Image src={photo(s.photo)} alt="" widths={[480, 800]} sizes="(min-width: 1000px) 580px, 100vw" />
             <span class="shade" />
             <span class="row">
               <span class="chip num">0{i + 1}</span>
               <span>
-                <span class="title">{s.data.title}</span>
-                <span class="desc">{s.data.fits.slice(0, 3).join(' · ')}</span>
+                <span class="title">{s.title}</span>
+                <span class="desc">{s.fits.slice(0, 3).join(' · ')}</span>
               </span>
               <span class="go"><Icon name="arrowRight" /></span>
             </span>
@@ -79,11 +77,11 @@ const schema = [
       <article class="summary">
         <span class="num">0{i + 1}</span>
         <div>
-          <h2 class="h3"><a href={href(serviceUrl(s.id))}>{s.data.title}</a></h2>
-          <p class="sub">{s.data.description}</p>
-          <div class="tags" style="margin-top:16px">{s.data.fits.map(f => <span class="tag">{f}</span>)}</div>
+          <h2 class="h3"><a href={href(serviceUrl(s.slug))}>{s.title}</a></h2>
+          <p class="sub">{s.description}</p>
+          <div class="tags" style="margin-top:16px">{s.fits.map(f => <span class="tag">{f}</span>)}</div>
         </div>
-        <a href={href(serviceUrl(s.id))} class="btn btn-outline btn-sm">Какво включва</a>
+        <a href={href(serviceUrl(s.slug))} class="btn btn-outline btn-sm">Какво включва</a>
       </article>
     ))}
 

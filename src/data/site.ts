@@ -1,5 +1,5 @@
 // Site content shared by the pages and the generated llms.txt / llms-full.txt.
-// Service content lives in src/content/services/*.mdx.
+// Service content lives in src/data/services.ts.
 
 export const SITE_NAME = 'Celebris Vibe';
 export const SLOGAN = 'Създаваме Вайб, Честваме Живота.';

@@ -45,6 +45,8 @@ const organization = {
   knowsLanguage: 'bg',
   ...(sameAs.length ? { sameAs } : {}),
 };
+// Commit this page was built from; the post-deploy check waits for it to go live
+const buildId = process.env.GITHUB_SHA ?? 'local';
 const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': [organization, ...schema] });
 ---
 <!DOCTYPE html>
@@ -69,6 +71,7 @@ const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': [org
   <meta name="twitter:card" content="summary_large_image" />
 
   <meta name="theme-color" content="#121317" />
+  <meta name="build" content={buildId} />
   <link rel="icon" type="image/png" sizes="32x32" href={href('/assets/favicon.png')} />
   <link rel="icon" type="image/svg+xml" href={href('/assets/favicon.svg')} />
   <link rel="apple-touch-icon" href={href('/assets/apple-touch-icon.png')} />

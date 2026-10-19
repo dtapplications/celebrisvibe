@@ -1,17 +1,17 @@
 import type { APIRoute } from 'astro';
-import { getCollection } from 'astro:content';
 import { ROUTES } from '../data/site';
+import { SERVICES, serviceUrl } from '../data/services';
 import { abs } from '../lib/urls';
 
-export const GET: APIRoute = async ({ site }) => {
-  const services = await getCollection('services');
+export const GET: APIRoute = ({ site }) => {
   const paths = [
     ROUTES.home,
     ROUTES.services,
-    ...services.sort((a, b) => a.data.order - b.data.order).map(s => `${ROUTES.services}${s.id}/`),
+    ...SERVICES.map(s => serviceUrl(s.slug)),
     ROUTES.prices,
     ROUTES.contact,
     ROUTES.privacy,
+    '/qr/',
   ];
   const lastmod = new Date().toISOString().slice(0, 10);
   const urls = paths.map(p => `  <url>

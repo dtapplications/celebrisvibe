@@ -1,21 +1,26 @@
-name: Deploy to GitHub Pages
+name: Test and deploy
+
+# Pull requests: type check + browser tests (build, dev server, dev-vs-build parity).
+# Pushes to main: the same tests, then deploy, then the tests again against the live site.
 
 on:
   push:
     branches: [main]
+  pull_request:
   workflow_dispatch:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
-  group: pages
-  cancel-in-progress: false
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  LIVE_URL_SITE: https://celebrisvibe.com
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -24,7 +29,28 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      - run: npx playwright install --with-deps chromium
       - run: npm run check
+      # Builds with fake service keys, starts the dev server and compares the two
+      - run: npm test
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14
+
+  build:
+    needs: test
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
       - run: npm run build
         env:
           PUBLIC_WEB3FORMS_KEY: ${{ secrets.FORMSSECRET }}
@@ -36,9 +62,46 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    concurrency:
+      group: pages
+      cancel-in-progress: false
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/deploy-pages@v4
         id: deployment
+
+  verify:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Wait until the live site serves this commit
+        run: |
+          for i in $(seq 1 60); do
+            if curl -fsS "$LIVE_URL_SITE/?v=$GITHUB_SHA" | grep -q "<meta name=\"build\" content=\"$GITHUB_SHA\""; then
+              echo "Live site is on $GITHUB_SHA"; exit 0
+            fi
+            sleep 10
+          done
+          echo "Live site did not switch to $GITHUB_SHA within 10 minutes"; exit 1
+      # Same browser tests against the live site, plus live-vs-build parity of this commit
+      - run: npm test
+        env:
+          LIVE_URL: ${{ env.LIVE_URL_SITE }}
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report-live
+          path: playwright-report/
+          retention-days: 14

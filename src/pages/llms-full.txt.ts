@@ -1,23 +1,22 @@
 import type { APIRoute } from 'astro';
-import { getCollection } from 'astro:content';
 import {
   CONTACT_EMAIL, CONTACT_PHONE, EVENT_TYPES, ROUTES, SERVICE_GUIDE,
   EXTRAS, PACKAGES, PRICE_FACTORS, PRICE_COMPARE, ALWAYS_INCLUDED,
 } from '../data/site';
+import { SERVICES, serviceUrl } from '../data/services';
 import { abs, textResponse } from '../lib/urls';
 
 const list = (items: string[]) => items.map(i => `- ${i}`).join('\n');
 
 // Full site content in one Markdown document for AI assistants (https://llmstxt.org).
-export const GET: APIRoute = async ({ site }) => {
+export const GET: APIRoute = ({ site }) => {
   const contact = abs(site, ROUTES.contact);
-  const entries = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
 
-  const services = entries.map(({ id, body, data: s }) => `### ${s.title}
+  const services = SERVICES.map(s => `### ${s.title}
 
-Страница: ${abs(site, `${ROUTES.services}${id}/`)}
+Страница: ${abs(site, serviceUrl(s.slug))}
 
-${(body ?? '').trim()}
+${s.description}
 
 Какво включва:
 ${list(s.includes)}

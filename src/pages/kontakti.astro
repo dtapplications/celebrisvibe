@@ -4,6 +4,7 @@ import Eyebrow from '../components/Eyebrow.astro';
 import Icon from '../components/Icon.astro';
 import Logo from '../components/Logo.astro';
 import ContactForm from '../components/ContactForm.astro';
+import EmailOff from '../components/EmailOff.astro';
 import { CONTACT_EMAIL, CONTACT_PHONE, ROUTES } from '../data/site';
 import { abs } from '../lib/urls';
 
@@ -28,7 +29,7 @@ const schema = [{
           Изпрати ни детайлите и ще отговорим в рамките на един работен ден.
         </p>
         <div class="links">
-          <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
+          <EmailOff><a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></EmailOff>
           <a href={`tel:${CONTACT_PHONE.replace(/[^\d+]/g, '')}`}>{CONTACT_PHONE}</a>
         </div>
 
