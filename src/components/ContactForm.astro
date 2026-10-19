@@ -1,0 +1,296 @@
+---
+import { CALL_TIMES, FORM_EVENT_TYPES, FORM_SERVICES, GUEST_OPTIONS, ROUTES } from '../data/site';
+import { href } from '../lib/urls';
+---
+<div id="cv-form" class="form-wrap">
+  <form data-contact data-mode="inquiry" novalidate>
+    <fieldset class="modes">
+      <legend class="sr-only">Как да се свържем</legend>
+      <label><input type="radio" name="mode" value="inquiry" checked /><span>Изпрати запитване</span></label>
+      <label><input type="radio" name="mode" value="call" /><span>Поискай обаждане</span></label>
+    </fieldset>
+
+    <fieldset data-only="inquiry">
+      <legend class="field-label">Вид събитие</legend>
+      <div class="choices">
+        {FORM_EVENT_TYPES.map(l => (
+          <label class="choice"><input type="radio" name="type" value={l} checked={l === 'Сватба'} /><span>{l}</span></label>
+        ))}
+      </div>
+    </fieldset>
+
+    <div class="row">
+      <label class="field">Име *<input class="input" name="name" autocomplete="name" maxlength="80" placeholder="Твоето име" required /></label>
+      <label class="field">Телефон *<input class="input" name="phone" type="tel" autocomplete="tel" maxlength="30" placeholder="+359…" required /></label>
+      <label class="field" data-only="inquiry">Имейл<input class="input" name="email" type="email" autocomplete="email" maxlength="120" placeholder="ти@имейл.com" /></label>
+    </div>
+
+    <div class="row row-sm" data-only="inquiry">
+      <div class="field">
+        <span id="date-label">Дата на събитието</span>
+        <div data-date-picker aria-labelledby="date-label"></div>
+        <input type="hidden" name="date" />
+      </div>
+      <label class="field">Локация / Зала<input class="input" name="location" maxlength="120" placeholder="София, зала…" /></label>
+      <label class="field">Гости
+        <select class="input" name="guests">
+          <option value="">Избери…</option>
+          {GUEST_OPTIONS.map(g => <option>{g}</option>)}
+        </select>
+      </label>
+    </div>
+
+    <fieldset data-only="inquiry">
+      <legend class="field-label">Какво ти трябва?</legend>
+      <div class="choices">
+        {FORM_SERVICES.map(s => (
+          <label class="choice choice-box"><input type="checkbox" name="services" value={s} /><span>{s}</span></label>
+        ))}
+      </div>
+    </fieldset>
+
+    <label class="field" data-only="inquiry">Допълнителна информация
+      <textarea class="input" name="note" rows="3" maxlength="2000" placeholder="Идеи за зала, музикални предпочитания, бюджет…"></textarea>
+    </label>
+
+    <fieldset data-only="call" hidden>
+      <legend class="field-label">Най-добро време за обаждане</legend>
+      <div class="choices">
+        {CALL_TIMES.map(t => (
+          <label class="choice"><input type="radio" name="time" value={t} checked={t === 'Следобед'} /><span>{t}</span></label>
+        ))}
+      </div>
+    </fieldset>
+
+    <!-- Honeypots: invisible to people, bots fill them in -->
+    <div class="trap" aria-hidden="true">
+      <input type="checkbox" name="botcheck" tabindex="-1" />
+      <input type="text" name="company_website" tabindex="-1" autocomplete="off" />
+    </div>
+
+    <div class="card consent">
+      <label>
+        <input type="checkbox" name="consent" />
+        <span>
+          Запознах се с <a href={href(ROUTES.privacy)}>Политиката за поверителност</a> и съм съгласен данните ми да бъдат използвани, за да получа отговор и оферта. *
+        </span>
+      </label>
+      <div class="consent-note">Използваме данните само за отговор на запитването. Не ги споделяме и не изпращаме реклама.</div>
+    </div>
+
+    <div class="notice notice-err" role="alert" data-error hidden></div>
+
+    <div class="submit-row">
+      <button type="submit" class="btn btn-primary" data-submit>Изпрати запитване</button>
+      <span class="required">* задължителни полета</span>
+    </div>
+  </form>
+
+  <div class="card sent" data-sent hidden>
+    <div class="display sent-title" data-sent-title></div>
+    <p data-sent-msg></p>
+    <button type="button" class="btn btn-outline btn-sm" data-back>Обратно към формата</button>
+  </div>
+</div>
+
+<style>
+  .form-wrap { scroll-margin-top: 110px; }
+  form { display: flex; flex-direction: column; gap: 26px; }
+  fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+  legend { padding: 0; }
+
+  .modes { display: flex; align-self: flex-start; padding: 4px; border: 1px solid var(--chip); border-radius: 999px; }
+  .modes label { position: relative; cursor: pointer; }
+  .modes input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+  .modes span { display: block; padding: 10px 20px; border-radius: 999px; font-size: 15px; color: var(--muted); white-space: nowrap; }
+  @media (max-width: 420px) { .modes span { padding: 10px 13px; font-size: 14px; } }
+  .modes input:checked + span { background: var(--ink); color: var(--paper); }
+  .modes input:focus-visible + span { outline: 2px solid #8a6d3b; outline-offset: 2px; }
+
+  .row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; }
+  .row-sm { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+
+  .trap { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+
+  .consent { padding: 18px 20px; border-radius: 16px; display: flex; flex-direction: column; gap: 10px; }
+  .consent label { display: flex; gap: 12px; align-items: flex-start; font-size: 15px; line-height: 1.5; cursor: pointer; }
+  .consent input { width: 20px; height: 20px; margin-top: 2px; flex-shrink: 0; accent-color: var(--gold); cursor: pointer; }
+  .consent a { color: var(--gold); text-decoration: underline; text-underline-offset: 3px; }
+  .consent-note { font-size: 13px; color: var(--muted); line-height: 1.5; padding-left: 32px; }
+
+  .submit-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  [data-submit]:disabled { opacity: 0.6; cursor: wait; }
+  .required { font-size: 13px; color: var(--muted); }
+
+  .sent { padding: 48px 36px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 16px; }
+  .sent-title { font-size: clamp(36px, 5vw, 48px); line-height: 1.05; }
+  .sent p { margin: 0; font-size: 18px; font-weight: 300; line-height: 1.55; color: var(--body); max-width: 420px; }
+</style>
+
+<script>
+  import { CONTACT_EMAIL, CONTACT_PHONE } from '../data/site';
+  import { loadBookedDates } from '../lib/availability';
+  import { DatePicker } from '../lib/datepicker';
+  import { clearDraft, readDraft, writeDraft, type Draft } from '../lib/draft';
+
+  // Set in .env locally and from the FORMSSECRET repository secret in CI.
+  const WEB3FORMS_KEY: string = import.meta.env.PUBLIC_WEB3FORMS_KEY ?? '';
+
+  const form = document.querySelector<HTMLFormElement>('[data-contact]');
+  if (form) {
+    const openedAt = Date.now();
+    const field = <T extends HTMLElement = HTMLInputElement>(name: string) => form.querySelector<T>(`[name="${name}"]`)!;
+    const errorBox = form.querySelector<HTMLElement>('[data-error]')!;
+    const submitBtn = form.querySelector<HTMLButtonElement>('[data-submit]')!;
+    const sentPanel = document.querySelector<HTMLElement>('[data-sent]')!;
+    const dateInput = field('date');
+
+    const radio = (name: string) => (form.elements.namedItem(name) as RadioNodeList).value;
+    const mode = () => radio('mode') as 'inquiry' | 'call';
+    const services = () => [...form.querySelectorAll<HTMLInputElement>('input[name="services"]:checked')].map(i => i.value);
+
+    const datePicker = new DatePicker(form.querySelector('[data-date-picker]')!, {
+      onChange: iso => { dateInput.value = iso; save(); },
+    });
+
+    // ── Mode (inquiry / call) ─────────────────────────────────────────────────
+    const applyMode = () => {
+      const m = mode();
+      form.dataset.mode = m;
+      form.querySelectorAll<HTMLElement>('[data-only]').forEach(n => { n.hidden = n.dataset.only !== m; });
+      submitBtn.textContent = m === 'call' ? 'Поискай обаждане' : 'Изпрати запитване';
+    };
+
+    // ── Draft: prefill from other pages and keep it while the visitor edits ──
+    const save = () => writeDraft({
+      mode: mode(), type: radio('type'), guests: field<HTMLSelectElement>('guests').value,
+      services: services(), date: dateInput.value, note: field<HTMLTextAreaElement>('note').value,
+    });
+    const restore = (d: Draft) => {
+      const check = (name: string, value?: string) => {
+        const input = value && form.querySelector<HTMLInputElement>(`input[name="${name}"][value="${CSS.escape(value)}"]`);
+        if (input) input.checked = true;
+      };
+      check('mode', d.mode);
+      check('type', d.type);
+      if (d.guests) field<HTMLSelectElement>('guests').value = d.guests;
+      if (d.services) form.querySelectorAll<HTMLInputElement>('input[name="services"]').forEach(i => { i.checked = d.services!.includes(i.value); });
+      if (d.date) { dateInput.value = d.date; datePicker.setValue(d.date); }
+      if (d.note) field<HTMLTextAreaElement>('note').value = d.note;
+    };
+    restore(readDraft());
+    applyMode();
+    form.addEventListener('change', e => {
+      if ((e.target as HTMLInputElement).name === 'mode') applyMode();
+      save();
+    });
+    form.addEventListener('input', save);
+
+    // ── Booked dates + "check a date" card ────────────────────────────────────
+    const checkRoot = document.querySelector<HTMLElement>('[data-date-check]');
+    const status = (state: string) => document.querySelectorAll<HTMLElement>('[data-status]').forEach(n => { n.hidden = n.dataset.status !== state; });
+    const checker = checkRoot && new DatePicker(checkRoot, {
+      placeholder: 'Избери дата от календара',
+      onChange: async iso => {
+        status('checking');
+        const booked = await loadBookedDates();
+        checker!.setBooked(booked);
+        datePicker.setBooked(booked);
+        if (!booked) return status('unknown');
+        if (booked.has(iso)) return status('taken');
+        dateInput.value = iso;
+        datePicker.setValue(iso);
+        save();
+        status('available');
+      },
+    });
+    loadBookedDates().then(booked => { checker?.setBooked(booked); datePicker.setBooked(booked); });
+    document.querySelector('[data-to-form]')?.addEventListener('click', () => {
+      document.getElementById('cv-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    // ── Submit ────────────────────────────────────────────────────────────────
+    const fail = (msg: string) => { errorBox.textContent = msg; errorBox.hidden = false; };
+    let sending = false;
+
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      if (sending) return;
+      errorBox.hidden = true;
+
+      const m = mode();
+      const name = field('name').value.trim();
+      const phone = field('phone').value.trim();
+      const email = field('email').value.trim();
+      const note = field<HTMLTextAreaElement>('note').value;
+      const showSent = () => {
+        const who = name ? `, ${name}` : '';
+        sentPanel.querySelector('[data-sent-title]')!.textContent = m === 'call' ? 'Обаждането е записано' : 'Запитването е изпратено';
+        sentPanel.querySelector('[data-sent-msg]')!.textContent = m === 'call'
+          ? `Благодарим ти${who}. Ще те потърсим ${radio('time').toLowerCase()} или на следващия работен ден.`
+          : `Благодарим ти${who}. Ще се свържем с теб в рамките на един работен ден за твоето ${radio('type').toLowerCase()}.`;
+        form.hidden = true;
+        sentPanel.hidden = false;
+      };
+
+      // Bots get a fake success so they don't learn what tripped them.
+      if (field('botcheck').checked || field('company_website').value) return showSent();
+      if (Date.now() - openedAt < 3000) return showSent();
+
+      if (name.length < 2) return fail('Моля, въведи името си.');
+      if (!/^[+\d\s()\-]+$/.test(phone) || phone.replace(/\D/g, '').length < 7) return fail('Моля, въведи валиден телефонен номер.');
+      if (m === 'inquiry' && email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return fail('Имейлът не изглежда валиден.');
+      if ((note.match(/https?:\/\/|www\./gi) || []).length > 2) return fail('Съобщението съдържа твърде много линкове.');
+      if (!field('consent').checked) return fail('Моля, потвърди, че си запознат с Политиката за поверителност.');
+
+      let lastSent = 0;
+      try { lastSent = Number(localStorage.getItem('cv-last-sent')) || 0; } catch {}
+      if (Date.now() - lastSent < 60_000) return fail('Вече получихме запитване от теб. Опитай отново след минута.');
+
+      const type = radio('type');
+      const fields: Record<string, string> = m === 'call'
+        ? { subject: `Заявка за обаждане - ${name}`, 'Тип': 'Обаждане', 'Име': name, 'Телефон': phone, 'Удобно време': radio('time') }
+        : {
+            subject: `Запитване: ${type}${dateInput.value ? ` - ${dateInput.value}` : ''}`,
+            'Тип': 'Запитване', 'Име': name, 'Телефон': phone, email,
+            'Вид събитие': type, 'Дата': dateInput.value, 'Локация': field('location').value,
+            'Гости': field<HTMLSelectElement>('guests').value, 'Услуги': services().join(', '), 'Съобщение': note,
+          };
+      const payload = Object.fromEntries(Object.entries(fields).filter(([, v]) => v.trim() !== ''));
+
+      sending = true;
+      submitBtn.disabled = true;
+      const label = submitBtn.textContent;
+      submitBtn.textContent = 'Изпращане…';
+      try {
+        if (!WEB3FORMS_KEY) {
+          if (!import.meta.env.DEV) throw new Error('Web3Forms key not configured');
+          console.info('[mock] Web3Forms payload', payload);
+          await new Promise(r => setTimeout(r, 700));
+        } else {
+          const res = await fetch('https://api.web3forms.com/submit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+            body: JSON.stringify({ access_key: WEB3FORMS_KEY, from_name: 'Celebris Vibe - сайт', ...payload }),
+          });
+          const json = await res.json().catch(() => ({}));
+          if (!res.ok || !json.success) throw new Error(json.message || `HTTP ${res.status}`);
+        }
+        try { localStorage.setItem('cv-last-sent', String(Date.now())); } catch {}
+        clearDraft();
+        showSent();
+      } catch {
+        fail(`Не успяхме да изпратим формата. Обади ни се на ${CONTACT_PHONE} или пиши на ${CONTACT_EMAIL}.`);
+      } finally {
+        sending = false;
+        submitBtn.disabled = false;
+        submitBtn.textContent = label;
+      }
+    });
+
+    sentPanel.querySelector('[data-back]')!.addEventListener('click', () => {
+      sentPanel.hidden = true;
+      form.hidden = false;
+    });
+  }
+</script>

@@ -1,0 +1,27 @@
+---
+import { href } from '../lib/urls';
+
+// The logo SVG is used as a mask and filled with the text colour, so one 19 KB file
+// serves both themes instead of two 170 KB PNGs.
+interface Props { height: number | string; label?: string; class?: string }
+const { height, label = 'Celebris Vibe', class: className } = Astro.props;
+const h = typeof height === 'number' ? `${height}px` : height;
+---
+<span
+  class:list={['logo', className]}
+  role={label ? 'img' : undefined}
+  aria-label={label || undefined}
+  aria-hidden={label ? undefined : 'true'}
+  style={`--h:${h};--logo-mask:url('${href('/assets/celebris-logo-dark.svg')}')`}
+></span>
+
+<style>
+  .logo {
+    display: block;
+    height: var(--h);
+    aspect-ratio: 2624 / 3142;
+    background: var(--logo);
+    -webkit-mask: var(--logo-mask) center / contain no-repeat;
+    mask: var(--logo-mask) center / contain no-repeat;
+  }
+</style>

@@ -1,0 +1,176 @@
+---
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import { ROUTES } from '../data/site';
+import { SERVICES as services, serviceUrl } from '../data/services';
+import { href } from '../lib/urls';
+import { photo } from '../lib/photos';
+
+// Every service and highlight is rendered into the HTML (so search engines and agents
+// see all of it); the script only switches which one is visible.
+---
+<div class="band" data-showcase>
+  <div class="head">
+    {services.map((s, i) => (
+      <div data-panel={i} hidden={i > 0}>
+        <div class="intro">{s.intro}</div>
+        <h2 class="h2 title"><a href={href(serviceUrl(s.slug))}>{s.title}</a></h2>
+      </div>
+    ))}
+    <div class="tabs" role="tablist" aria-label="Услуги">
+      {services.map((s, i) => (
+        <button type="button" role="tab" data-tab={i} aria-selected={i === 0 ? 'true' : 'false'}>{s.title}</button>
+      ))}
+    </div>
+  </div>
+
+  {services.map((s, si) => (
+    <div class="body" data-panel={si} hidden={si > 0}>
+      <div class="steps">
+        {s.highlights.map((h, i) => (
+          <button type="button" class="step" data-step={i} aria-pressed={i === 0 ? 'true' : 'false'}>
+            <span class="step-num">{i + 1}</span>
+            <span class="step-occ">{h.occasions.join(' · ')}</span>
+            <span class="step-arrow"><Icon name="chevronRight" size={22} /></span>
+            <span class="step-title">{h.title}</span>
+          </button>
+        ))}
+      </div>
+
+      <div class="stage">
+        {s.highlights.map((h, i) => (
+          <Image src={photo(h.photo)} alt={h.title} data-step={i} class:list={['stage-img', i === 0 && 'is-on']} widths={[480, 800, 1200]} sizes="(min-width: 900px) 45vw, 100vw" />
+        ))}
+        <div class="bars">
+          {s.highlights.map((_, i) => <span data-step={i} class:list={[i === 0 && 'is-on']} />)}
+        </div>
+        {s.highlights.map((h, i) => (
+          <div class="detail" data-step={i} hidden={i > 0}>
+            <div class="detail-top">
+              <div class="tags">{h.occasions.map(o => <span class="tag">{o}</span>)}</div>
+              <span class="count">{i + 1} от {s.highlights.length}</span>
+            </div>
+            <h3 class="display detail-title">{h.title}</h3>
+            <p class="detail-desc">{h.desc}</p>
+            <div class="detail-nav">
+              <button type="button" class="nav-btn" data-move="-1" aria-label="Предишна"><Icon name="arrowLeft" /></button>
+              <button type="button" class="nav-btn solid" data-move="1" aria-label="Следваща"><Icon name="arrowRight" /></button>
+              <a href={href(ROUTES.contact)} data-draft={JSON.stringify({ mode: 'inquiry', services: s.formServices })} class="text-link ask">Запитване</a>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  ))}
+</div>
+
+<style>
+  .band { border-radius: 40px; background: var(--ink); color: var(--paper); padding: clamp(28px, 4.5vw, 64px); }
+  .head {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr));
+    gap: 24px 40px; align-items: end; margin-bottom: 40px;
+  }
+  .intro { font-size: 15px; color: var(--band-gold); margin-bottom: 12px; }
+  .title { line-height: 0.95; }
+  .title a:hover { color: var(--band-gold); }
+  .tabs {
+    justify-self: end; display: flex; gap: 4px; padding: 5px; flex-wrap: wrap;
+    border-radius: 999px; border: 1px solid var(--band-line);
+  }
+  .tabs button {
+    padding: 11px 20px; border-radius: 999px; border: none; background: transparent; color: var(--paper);
+    font-size: 15px; cursor: pointer; transition: background 250ms;
+  }
+  .tabs button[aria-selected='true'] { background: var(--paper); color: var(--ink); }
+
+  .body { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 20px; align-items: stretch; }
+  .steps { display: flex; flex-direction: column; gap: 8px; }
+  .step {
+    display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 2px 16px; align-items: center;
+    text-align: left; cursor: pointer; padding: 16px 20px 16px 16px; border-radius: 22px;
+    border: 1px solid var(--band-line); background: transparent; color: var(--paper);
+    transition: background 300ms, border-color 300ms;
+  }
+  .step-num {
+    grid-row: span 2; width: 40px; height: 40px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 600; font-size: 15px; color: var(--band-gold); transition: background 300ms;
+  }
+  .step-occ { font-size: 13px; color: var(--band-gold); }
+  .step-arrow { grid-row: span 2; display: flex; opacity: 0; transition: opacity 300ms; }
+  .step-title { font-family: var(--font-display); font-weight: 600; letter-spacing: -0.02em; font-size: 22px; line-height: 1.1; }
+  .step[aria-pressed='true'] { background: var(--band-active); border-color: var(--band-active); }
+  .step[aria-pressed='true'] .step-num { background: var(--band-gold); color: var(--ink); }
+  .step[aria-pressed='true'] .step-arrow { opacity: 1; }
+
+  .stage {
+    position: relative; min-height: clamp(380px, 50vw, 460px); border-radius: 30px; overflow: hidden;
+    background: var(--band-s1); display: flex; flex-direction: column; justify-content: space-between; padding: 16px;
+  }
+  .stage :global(.stage-img) {
+    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+    opacity: 0; transition: opacity 500ms;
+  }
+  .stage :global(.stage-img.is-on) { opacity: 1; }
+  .bars { position: relative; display: flex; gap: 6px; }
+  .bars span { flex: 1; height: 4px; border-radius: 4px; background: rgba(255,255,255,0.35); transition: background 400ms; }
+  .bars span.is-on { background: var(--band-gold); }
+
+  .detail { position: relative; background: var(--paper); color: var(--ink); border-radius: 24px; padding: 24px; display: flex; flex-direction: column; gap: 12px; }
+  .detail-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .tag { padding: 6px 12px; font-size: 13px; }
+  .count { font-size: 14px; color: var(--muted); }
+  .detail-title { margin: 0; letter-spacing: -0.03em; font-size: clamp(30px, 3vw, 40px); line-height: 1; }
+  .detail-desc { margin: 0; font-size: 17px; font-weight: 300; line-height: 1.55; color: var(--body); }
+  .detail-nav { display: flex; gap: 8px; margin-top: 4px; align-items: center; }
+  .nav-btn {
+    width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--edge); background: transparent;
+    color: var(--ink); cursor: pointer; display: flex; align-items: center; justify-content: center;
+  }
+  .nav-btn.solid { border: none; background: var(--ink); color: var(--paper); }
+  .ask { margin-left: auto; font-size: 15px; }
+
+  @media (max-width: 640px) {
+    .tabs { justify-self: stretch; flex-wrap: nowrap; }
+    .tabs button { flex: 1; padding: 10px 6px; font-size: 14px; }
+  }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-showcase]');
+  if (root) {
+    const STEPS = 5;
+    let svc = 0;
+    let step = 0;
+    let picked = false; // stop auto-advancing once the visitor interacts
+
+    const panels = (sel: string) => root.querySelectorAll<HTMLElement>(sel);
+    const render = () => {
+      panels('[data-panel]').forEach(p => { p.hidden = Number(p.dataset.panel) !== svc; });
+      panels('[data-tab]').forEach(t => t.setAttribute('aria-selected', String(Number(t.dataset.tab) === svc)));
+      const body = root.querySelector<HTMLElement>(`.body[data-panel="${svc}"]`)!;
+      body.querySelectorAll<HTMLElement>('[data-step]').forEach(el => {
+        const i = Number(el.dataset.step);
+        if (el.classList.contains('step')) el.setAttribute('aria-pressed', String(i === step));
+        else if (el.classList.contains('detail')) el.hidden = i !== step;
+        else if (el.tagName === 'SPAN') el.classList.toggle('is-on', i <= step);
+        else el.classList.toggle('is-on', i === step);
+      });
+    };
+    const go = (i: number) => { step = ((i % STEPS) + STEPS) % STEPS; render(); };
+
+    root.addEventListener('click', e => {
+      const target = e.target as Element;
+      const tab = target.closest<HTMLElement>('[data-tab]');
+      const stepBtn = target.closest<HTMLElement>('.step');
+      const move = target.closest<HTMLElement>('[data-move]');
+      if (tab) { picked = true; svc = Number(tab.dataset.tab); go(0); }
+      else if (stepBtn) { picked = true; go(Number(stepBtn.dataset.step)); }
+      else if (move) { picked = true; go(step + Number(move.dataset.move)); }
+    });
+
+    setInterval(() => {
+      if (!picked && document.visibilityState === 'visible') go(step + 1);
+    }, 4500);
+  }
+</script>

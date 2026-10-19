@@ -1,0 +1,25 @@
+---
+import { href } from '../lib/urls';
+
+type Action = { label: string; path: string; draft?: Record<string, unknown>; primary?: boolean };
+interface Props { actions: Action[] }
+const { actions } = Astro.props;
+---
+<div class="band">
+  <div class="display title"><slot /></div>
+  <div class="actions">
+    {actions.map(a => (
+      <a href={href(a.path)} class:list={['btn', a.primary ? 'btn-paper' : 'btn-ghost']} data-draft={a.draft ? JSON.stringify(a.draft) : undefined}>{a.label}</a>
+    ))}
+  </div>
+</div>
+
+<style>
+  .band {
+    margin-top: 64px; border-radius: 28px; padding: clamp(32px, 5vw, 64px);
+    background: var(--ink); color: var(--paper);
+    display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap;
+  }
+  .title { font-size: clamp(28px, 4vw, 48px); line-height: 1.1; }
+  .actions { display: flex; gap: 12px; flex-wrap: wrap; }
+</style>

@@ -1,0 +1,72 @@
+---
+import '@fontsource/jost/300.css';
+import '@fontsource/jost/400.css';
+import '@fontsource/jost/500.css';
+import '@fontsource/jost/600.css';
+import '@fontsource/onest/600.css';
+import '@fontsource/onest/700.css';
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import SeoMeta from '../components/SeoMeta.astro';
+import { CONTACT_EMAIL, SITE_NAME, SLOGAN, SOCIAL } from '../data/site';
+import { abs } from '../lib/urls';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Key of the link-preview image in src/data/og.ts (rendered at /og/<key>.jpg) */
+  og?: string;
+  /** Extra JSON-LD nodes for this page */
+  schema?: Record<string, unknown>[];
+  noindex?: boolean;
+  /** Full <title> instead of "title | Celebris Vibe" */
+  fullTitle?: boolean;
+}
+
+const { title, description, og = 'home', schema = [], noindex = false, fullTitle = false } = Astro.props;
+const pageTitle = fullTitle ? title : `${title} | ${SITE_NAME}`;
+
+const sameAs = Object.values(SOCIAL).filter(u => u.startsWith('http'));
+const organization = {
+  '@type': 'Organization',
+  '@id': abs(Astro.site, '#organization'),
+  name: SITE_NAME,
+  url: abs(Astro.site),
+  logo: abs(Astro.site, 'assets/apple-touch-icon.png'),
+  email: CONTACT_EMAIL,
+  slogan: SLOGAN,
+  description: 'DJ, водещ, озвучаване и осветление за сватби, частни тържества и корпоративни събития в България.',
+  areaServed: { '@type': 'Country', name: 'България' },
+  knowsLanguage: 'bg',
+  ...(sameAs.length ? { sameAs } : {}),
+};
+const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': [organization, ...schema] });
+---
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <SeoMeta title={pageTitle} description={description} og={og} noindex={noindex} />
+
+  <!-- Apply the saved theme before first paint (dark is the default) -->
+  <script is:inline>
+    try { if (localStorage.getItem('cv-theme') === 'light') document.documentElement.dataset.theme = 'light'; } catch (e) {}
+  </script>
+  <script type="application/ld+json" set:html={jsonLd} />
+  <slot name="head" />
+</head>
+<body>
+  <Header />
+  <main>
+    <slot />
+  </main>
+  <Footer />
+</body>
+</html>
+
+<script>
+  import { initDraftLinks } from '../lib/draft';
+  initDraftLinks();
+</script>

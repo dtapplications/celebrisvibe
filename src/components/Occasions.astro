@@ -1,0 +1,44 @@
+---
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import { EVENT_TYPES, ROUTES } from '../data/site';
+import { href } from '../lib/urls';
+import { photo } from '../lib/photos';
+
+interface Props { showServicesLink?: boolean }
+const { showServicesLink = false } = Astro.props;
+---
+<div class="section-head">
+  <h2 class="h2">Събития, които правим</h2>
+  {showServicesLink && <a href={href(ROUTES.services)} class="text-link">Услугите в детайли</a>}
+</div>
+<div class="grid">
+  {EVENT_TYPES.map(e => (
+    <a href={href(ROUTES.contact)} data-draft={JSON.stringify({ mode: 'inquiry', type: e.formLabel })} class="reveal-card occasion">
+      <Image src={photo(e.photo)} alt="" widths={[400, 700, 1000]} sizes="(min-width: 1100px) 33vw, (min-width: 700px) 50vw, 100vw" />
+      <span class="shade" />
+      <span class="body">
+        <span class="title">{e.title}</span>
+        <span class="desc">{e.desc}</span>
+        <span class="foot">
+          <span class="chip">{e.subtitle}</span>
+          <span class="go"><Icon name="arrowRight" /></span>
+        </span>
+      </span>
+    </a>
+  ))}
+</div>
+
+<style>
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 16px; }
+  .occasion { min-height: 340px; border-radius: 28px; }
+  .body { position: relative; display: flex; flex-direction: column; gap: 14px; flex: 1; padding: 32px; }
+  .title { font-family: var(--font-display); font-weight: 600; letter-spacing: -0.025em; font-size: clamp(28px, 2.4vw, 36px); line-height: 1.05; }
+  .desc { font-size: 17px; font-weight: 300; line-height: 1.55; color: var(--body); max-width: 440px; }
+  .foot { margin-top: auto; padding-top: 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .chip { padding: 7px 14px; border-radius: 999px; background: var(--paper); font-size: 14px; color: var(--gold); }
+  .go {
+    flex-shrink: 0; width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--edge);
+    display: flex; align-items: center; justify-content: center;
+  }
+</style>

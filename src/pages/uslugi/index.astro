@@ -1,0 +1,145 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import Eyebrow from '../../components/Eyebrow.astro';
+import HeroBackdrop from '../../components/HeroBackdrop.astro';
+import Icon from '../../components/Icon.astro';
+import Occasions from '../../components/Occasions.astro';
+import Extras from '../../components/Extras.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { ROUTES, SERVICE_GUIDE } from '../../data/site';
+import { SERVICES as services, serviceUrl } from '../../data/services';
+import { abs, href } from '../../lib/urls';
+import { photo } from '../../lib/photos';
+
+
+const schema = [
+  {
+    '@type': 'ItemList',
+    name: 'Услуги на Celebris Vibe',
+    itemListElement: services.map((s, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      url: abs(Astro.site, serviceUrl(s.slug)),
+      name: s.title,
+    })),
+  },
+  {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Начало', item: abs(Astro.site) },
+      { '@type': 'ListItem', position: 2, name: 'Услуги', item: abs(Astro.site, ROUTES.services) },
+    ],
+  },
+];
+---
+<Base
+  title="Услуги - DJ, водещ, озвучаване и осветление"
+  description="DJ и водещ, собствено озвучаване и осветление - за сватби, частни партита и корпоративни събития. Избери отделна услуга или ги комбинирай в един пакет."
+  og="services"
+  schema={schema}
+>
+  <section class="hero page-top">
+    <HeroBackdrop />
+    <div class="split">
+      <div>
+        <Eyebrow>Услуги</Eyebrow>
+        <h1 class="h1" style="margin-top:24px">DJ, звук и светлина<br />за всеки повод.</h1>
+        <p class="lead">
+          Професионален DJ и водещ, собствено озвучаване и осветление - за сватби, частни партита и корпоративни събития. Избери отделна услуга или ги комбинирай в един пакет.
+        </p>
+        <div class="btn-row">
+          <a href={href(ROUTES.contact)} data-draft='{"mode":"inquiry"}' class="btn btn-primary">Провери свободна дата</a>
+          <a href={href(ROUTES.prices)} class="btn btn-outline">Виж цените</a>
+        </div>
+      </div>
+
+      <nav aria-label="Услуги" class="index">
+        {services.map((s, i) => (
+          <a href={href(serviceUrl(s.slug))} class="reveal-card item">
+            <Image src={photo(s.photo)} alt="" widths={[480, 800]} sizes="(min-width: 1000px) 580px, 100vw" />
+            <span class="shade" />
+            <span class="row">
+              <span class="chip num">0{i + 1}</span>
+              <span>
+                <span class="title">{s.title}</span>
+                <span class="desc">{s.fits.slice(0, 3).join(' · ')}</span>
+              </span>
+              <span class="go"><Icon name="arrowRight" /></span>
+            </span>
+          </a>
+        ))}
+      </nav>
+    </div>
+  </section>
+
+  <section class="section">
+    {services.map((s, i) => (
+      <article class="summary">
+        <span class="num">0{i + 1}</span>
+        <div>
+          <h2 class="h3"><a href={href(serviceUrl(s.slug))}>{s.title}</a></h2>
+          <p class="sub">{s.description}</p>
+          <div class="tags" style="margin-top:16px">{s.fits.map(f => <span class="tag">{f}</span>)}</div>
+        </div>
+        <a href={href(serviceUrl(s.slug))} class="btn btn-outline btn-sm">Какво включва</a>
+      </article>
+    ))}
+
+    <div class="stack-gap"><Occasions /></div>
+    <div class="stack-gap"><Extras /></div>
+
+    <div class="stack-gap">
+      <h2 class="h2-sm">Коя услуга за какъв повод?</h2>
+      <p class="sub" style="margin-bottom:36px">Не си сигурен какво ти трябва? Ето от какво започват повечето ни клиенти.</p>
+      <div class="guide">
+        {SERVICE_GUIDE.map(g => (
+          <div class="card guide-card">
+            <span class="tag tag-plain">{g.when}</span>
+            <h3 class="display guide-title">{g.title}</h3>
+            <p class="guide-desc">{g.desc}</p>
+            <div class="guide-foot">
+              <span class="rec"><span class="spark"><Icon name="sparkle" size={14} /></span>{g.rec}</span>
+              <a href={href(ROUTES.prices)} class="text-link text-link-sm">Цени</a>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <CtaBand actions={[
+      { label: 'Виж цените', path: ROUTES.prices },
+      { label: 'Провери датата', path: ROUTES.contact, draft: { mode: 'inquiry' }, primary: true },
+    ]}>Свободна ли е датата ти?</CtaBand>
+  </section>
+</Base>
+
+<style>
+  .index { width: 100%; max-width: 580px; justify-self: center; display: flex; flex-direction: column; gap: 12px; }
+  .item { border-radius: 24px; }
+  .row { position: relative; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 20px; padding: 22px 24px; }
+  .num { font-family: var(--font-display); font-weight: 700; font-size: 15px; color: var(--gold); }
+  .item .chip { background: none; padding: 0; }
+  .title { display: block; font-family: var(--font-display); font-weight: 600; letter-spacing: -0.02em; font-size: clamp(22px, 2vw, 28px); line-height: 1.1; }
+  .desc { display: block; margin-top: 6px; font-size: 15px; font-weight: 300; color: var(--body); }
+  .go { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--edge); display: flex; align-items: center; justify-content: center; }
+
+  .summary {
+    display: grid; grid-template-columns: 48px minmax(0, 1fr) auto; gap: 20px 24px; align-items: start;
+    padding: clamp(28px, 3vw, 40px) 0; border-top: 1px solid var(--line);
+  }
+  .summary:last-of-type { border-bottom: 1px solid var(--line); }
+  .summary .num { padding-top: 10px; }
+  .summary h2 a:hover { color: var(--gold); }
+  @media (max-width: 700px) {
+    .summary { grid-template-columns: 1fr; }
+  }
+
+  .guide { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 16px; }
+  .guide-card { display: flex; flex-direction: column; gap: 12px; padding: 28px; }
+  .guide-title { margin: 0; font-size: 26px; line-height: 1.1; }
+  .guide-desc { margin: 0; font-size: 16px; font-weight: 300; line-height: 1.5; color: var(--body); }
+  .guide-foot { margin-top: auto; padding-top: 12px; display: flex; justify-content: space-between; align-items: center; gap: 12px; border-top: 1px solid var(--line); }
+  .rec { font-size: 15px; font-weight: 500; display: inline-flex; align-items: center; gap: 8px; }
+  .spark { color: var(--gold); display: flex; }
+</style>
