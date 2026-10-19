@@ -1,21 +1,38 @@
+import type { APIRequestContext, Page } from '@playwright/test';
 import { test, expect, settle, checkedServices } from './fixtures';
 import { BOOKED_DATE, FREE_DATE, PAGES } from './env';
 
 const SITE = 'https://celebrisvibe.com';
 const isLive = () => test.info().project.name === 'live';
 
+/** Description, canonical URL and a working 1200×630 link-preview image for this page */
+async function expectSeo(page: Page, request: APIRequestContext, path: string, og: string) {
+  const meta = (sel: string) => page.locator(sel).first().getAttribute('content');
+  expect((await meta('meta[name="description"]'))!.length).toBeGreaterThan(50);
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', `${SITE}${path}`);
+  expect(await meta('meta[property="og:image"]')).toBe(`${SITE}/og/${og}.jpg`);
+  expect(await meta('meta[name="twitter:image"]')).toBe(`${SITE}/og/${og}.jpg`);
+  expect(await meta('meta[property="og:image:alt"]')).toBeTruthy();
+  expect(await meta('meta[property="og:title"]')).toBe(await page.title());
+  const img = await request.get(`/og/${og}.jpg`);
+  expect(img.status()).toBe(200);
+  expect(img.headers()['content-type']).toContain('image/jpeg');
+  const body = await img.body();
+  // JPEG SOF0/SOF2 marker holds the size: check it is 1200×630
+  const sof = body.findIndex((b, i) => b === 0xff && (body[i + 1] === 0xc0 || body[i + 1] === 0xc2));
+  expect([body.readUInt16BE(sof + 7), body.readUInt16BE(sof + 5)]).toEqual([1200, 630]);
+}
+
 test.describe('pages', () => {
   for (const p of PAGES) {
-    test(`${p.path} renders with SEO tags and loads every image`, async ({ page }) => {
+    test(`${p.path} renders with SEO tags and loads every image`, async ({ page, request }) => {
       const res = await page.goto(p.path);
       expect(res?.status()).toBe(200);
 
       await expect(page.locator('h1')).toHaveCount(1);
       await expect(page.locator('h1')).toContainText(p.h1);
       await expect(page).toHaveTitle(/Celebris Vibe/);
-      expect((await page.locator('meta[name="description"]').getAttribute('content'))!.length).toBeGreaterThan(50);
-      await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', `${SITE}${p.path}`);
-      await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', new RegExp(`^${SITE}/`));
+      await expectSeo(page, request, p.path, p.og);
 
       const ld = JSON.parse((await page.locator('script[type="application/ld+json"]').textContent())!);
       expect(ld['@graph'][0]).toMatchObject({ '@type': 'Organization', url: `${SITE}/` });
@@ -44,8 +61,9 @@ test.describe('pages', () => {
     errors.length = 0; // the 404 response itself is expected
   });
 
-  test('QR page links to the contact page', async ({ page }) => {
+  test('QR page links to the contact page', async ({ page, request }) => {
     await page.goto('/qr/');
+    await expectSeo(page, request, '/qr/', 'qr');
     await expect(page.locator('.qr-wrap svg')).toBeVisible();
     await expect(page.locator('.url')).toHaveText(`${SITE}/kontakti/`);
     await expect(page.getByRole('link', { name: 'Отвори формата' })).toHaveAttribute('href', '/kontakti/');

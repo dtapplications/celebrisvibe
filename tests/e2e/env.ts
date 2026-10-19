@@ -17,16 +17,16 @@ export const TEST_ENV = {
   PUBLIC_BOOKED_DATES_CSV_URL: BOOKED_CSV_URL,
 };
 
-/** Every page of the site, with its expected <h1> */
+/** Every page of the site, with its expected <h1> and link-preview image */
 export const PAGES = [
-  { path: '/', h1: 'Създаваме вайб.' },
-  { path: '/uslugi/', h1: 'DJ, звук и светлина' },
-  { path: '/uslugi/dj-i-vodesht/', h1: 'DJ & Водещ' },
-  { path: '/uslugi/ozvuchavane/', h1: 'Озвучаване' },
-  { path: '/uslugi/osvetlenie/', h1: 'Осветление' },
-  { path: '/ceni/', h1: 'Една оферта.' },
-  { path: '/kontakti/', h1: 'Запази дата.' },
-  { path: '/poveritelnost/', h1: 'Политика за поверителност' },
+  { path: '/', h1: 'Създаваме вайб.', og: 'home' },
+  { path: '/uslugi/', h1: 'DJ, звук и светлина', og: 'services' },
+  { path: '/uslugi/dj-i-vodesht/', h1: 'DJ & Водещ', og: 'dj-i-vodesht' },
+  { path: '/uslugi/ozvuchavane/', h1: 'Озвучаване', og: 'ozvuchavane' },
+  { path: '/uslugi/osvetlenie/', h1: 'Осветление', og: 'osvetlenie' },
+  { path: '/ceni/', h1: 'Една оферта.', og: 'prices' },
+  { path: '/kontakti/', h1: 'Запази дата.', og: 'contact' },
+  { path: '/poveritelnost/', h1: 'Политика за поверителност', og: 'privacy' },
 ];
 
 /** Fixed "today" so the calendar and screenshots are the same on every run */

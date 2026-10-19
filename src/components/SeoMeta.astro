@@ -1,0 +1,51 @@
+---
+import { SITE_NAME } from '../data/site';
+import { OG_HEIGHT, OG_PAGES, OG_WIDTH, ogPath } from '../data/og';
+import { abs, href } from '../lib/urls';
+
+// <head> tags for search engines and link previews, shared by every page.
+interface Props {
+  /** The full <title> */
+  title: string;
+  description: string;
+  /** Key of the link-preview image in src/data/og.ts (rendered at /og/<key>.jpg) */
+  og: string;
+  noindex?: boolean;
+}
+
+const { title, description, og, noindex = false } = Astro.props;
+if (!OG_PAGES[og]) throw new Error(`Unknown og image "${og}"`);
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const image = abs(Astro.site, ogPath(og));
+const imageAlt = `${OG_PAGES[og].title} - ${SITE_NAME}`;
+// Commit this page was built from; the post-deploy check waits for it to go live
+const buildId = process.env.GITHUB_SHA ?? 'local';
+---
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+{noindex && <meta name="robots" content="noindex" />}
+
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content={SITE_NAME} />
+<meta property="og:locale" content="bg_BG" />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={image} />
+<meta property="og:image:type" content="image/jpeg" />
+<meta property="og:image:width" content={String(OG_WIDTH)} />
+<meta property="og:image:height" content={String(OG_HEIGHT)} />
+<meta property="og:image:alt" content={imageAlt} />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={image} />
+<meta name="twitter:image:alt" content={imageAlt} />
+
+<meta name="theme-color" content="#121317" />
+<meta name="build" content={buildId} />
+<link rel="icon" type="image/png" sizes="32x32" href={href('/assets/favicon.png')} />
+<link rel="icon" type="image/svg+xml" href={href('/assets/favicon.svg')} />
+<link rel="apple-touch-icon" href={href('/assets/apple-touch-icon.png')} />
+<link rel="sitemap" type="application/xml" href={href('/sitemap.xml')} />

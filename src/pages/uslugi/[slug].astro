@@ -38,7 +38,7 @@ const schema = [
   },
 ];
 ---
-<Base title={s.seoTitle} description={s.description} image={s.photo} schema={schema}>
+<Base title={s.seoTitle} description={s.description} og={s.slug} schema={schema}>
   <article class="page-top">
     <nav aria-label="Навигация" class="crumbs">
       <a href={href(ROUTES.services)}>Услуги</a> <span aria-hidden="true">/</span> <span aria-current="page">{s.title}</span>

@@ -2,6 +2,7 @@
 import QRCode from 'qrcode';
 import { abs, href } from '../lib/urls';
 import { ROUTES } from '../data/site';
+import SeoMeta from '../components/SeoMeta.astro';
 import '@fontsource/jost/300.css';
 import '@fontsource/jost/500.css';
 import '@fontsource/bricolage-grotesque/600.css';
@@ -21,10 +22,11 @@ const qrSvg = await QRCode.toString(CONTACT_URL, {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="icon" type="image/png" sizes="32x32" href={`${base}assets/favicon.png`} />
-  <link rel="icon" type="image/svg+xml" href={`${base}assets/favicon.svg`} />
-  <link rel="apple-touch-icon" href={`${base}assets/apple-touch-icon.png`} />
-  <title>Контакти - Celebris Vibe</title>
+  <SeoMeta
+    title="Контакти - Celebris Vibe"
+    description="Сканирай QR кода, за да отвориш формата за контакт на Celebris Vibe и да ни разкажеш за събитието си - DJ, водещ, озвучаване и осветление."
+    og="qr"
+  />
   <style>
     *, *::before, *::after { box-sizing: border-box; }
     body {
