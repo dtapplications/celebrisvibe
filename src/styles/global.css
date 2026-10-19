@@ -14,7 +14,8 @@
   /* Hero backdrop: light theme needs a more saturated amber, multiplied onto the paper */
   --fx-color: var(--gold); --fx-beam: 1; --fx-dot: 1; --fx-eq: 0.3; --fx-blend: normal;
 
-  --font-display: 'Bricolage Grotesque', sans-serif;
+  /* Headings: Onest covers Cyrillic (Bricolage Grotesque did not) */
+  --font-display: 'Onest', sans-serif;
   --font-body: 'Jost', Helvetica, sans-serif;
   --pad-x: clamp(20px, 4vw, 64px);
   --stripes: repeating-linear-gradient(135deg, var(--s1) 0 12px, var(--s2) 12px 24px);

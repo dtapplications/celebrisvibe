@@ -12,18 +12,18 @@ import { OG_HEIGHT, OG_WIDTH } from '../data/og';
 // Paths are resolved from the project root: this module is bundled before it runs
 const ROOT = process.cwd();
 const require = createRequire(join(ROOT, 'package.json'));
-const font = (file: string) => readFile(require.resolve(`@fontsource/jost/files/${file}`));
+const font = (file: string) => readFile(require.resolve(`@fontsource/${file.split('-')[0]}/files/${file}`));
 
-// Bricolage Grotesque has no Cyrillic, so the images use Jost (also the site's body font)
+// Same fonts as the site: Onest for the headline, Jost for the small text.
+// Separate names per subset: satori uses one file per family+weight, then falls back by glyph.
 const fontsPromise = Promise.all([
-  font('jost-cyrillic-600-normal.woff'), font('jost-latin-600-normal.woff'),
-  font('jost-cyrillic-500-normal.woff'), font('jost-latin-500-normal.woff'),
-]).then(([c6, l6, c5, l5]) => [
-  // Separate names per subset: satori uses one file per family+weight, then falls back by glyph
-  { name: 'Jost Latin', data: l6, weight: 600 as const },
-  { name: 'Jost Latin', data: l5, weight: 500 as const },
-  { name: 'Jost Cyrillic', data: c6, weight: 600 as const },
-  { name: 'Jost Cyrillic', data: c5, weight: 500 as const },
+  font('onest-latin-600-normal.woff'), font('onest-cyrillic-600-normal.woff'),
+  font('jost-latin-500-normal.woff'), font('jost-cyrillic-500-normal.woff'),
+]).then(([ol, oc, jl, jc]) => [
+  { name: 'Onest Latin', data: ol, weight: 600 as const },
+  { name: 'Onest Cyrillic', data: oc, weight: 600 as const },
+  { name: 'Jost Latin', data: jl, weight: 500 as const },
+  { name: 'Jost Cyrillic', data: jc, weight: 500 as const },
 ]);
 
 const dataUri = (mime: string, buf: Buffer) => `data:${mime};base64,${buf.toString('base64')}`;
@@ -46,7 +46,7 @@ export async function renderOg({ eyebrow, title, photo: photoName }: OgInput): P
     readFile(join(ROOT, 'public/assets/celebris-logo-light.svg')),
   ]);
 
-  const tree = h('div', { width: OG_WIDTH, height: OG_HEIGHT, display: 'flex', position: 'relative', fontFamily: 'Jost Latin, Jost Cyrillic', color: '#f2f1ec' }, [
+  const tree = h('div', { width: OG_WIDTH, height: OG_HEIGHT, display: 'flex', position: 'relative', fontFamily: 'Jost Latin, Jost Cyrillic', fontWeight: 500, color: '#f2f1ec' }, [
     h('img', { position: 'absolute', inset: 0, width: OG_WIDTH, height: OG_HEIGHT, objectFit: 'cover' }, undefined,
       { src: dataUri('image/jpeg', photo), width: OG_WIDTH, height: OG_HEIGHT }),
     h('div', {
@@ -60,7 +60,7 @@ export async function renderOg({ eyebrow, title, photo: photoName }: OgInput): P
           h('div', { width: 44, height: 2, backgroundColor: '#c9ad78' }),
           eyebrow,
         ]),
-        h('div', { display: 'flex', fontSize: title.length > 40 ? 58 : 70, fontWeight: 600, lineHeight: 1.05, letterSpacing: -1 }, title),
+        h('div', { display: 'flex', fontFamily: 'Onest Latin, Onest Cyrillic', fontSize: title.length > 40 ? 56 : 68, fontWeight: 600, lineHeight: 1.05, letterSpacing: -1.5 }, title),
       ]),
       h('div', { display: 'flex', fontSize: 26, fontWeight: 500, color: '#c9ad78' }, 'celebrisvibe.com'),
     ]),
