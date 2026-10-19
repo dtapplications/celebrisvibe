@@ -1,0 +1,96 @@
+---
+import { getImage } from 'astro:assets';
+import '@fontsource/jost/300.css';
+import '@fontsource/jost/400.css';
+import '@fontsource/jost/500.css';
+import '@fontsource/jost/600.css';
+import '@fontsource/bricolage-grotesque/600.css';
+import '@fontsource/bricolage-grotesque/700.css';
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { CONTACT_EMAIL, SITE_NAME, SLOGAN, SOCIAL } from '../data/site';
+import { abs, href } from '../lib/urls';
+import { photo } from '../lib/photos';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Photo name from src/assets/photos used for link previews */
+  image?: string;
+  /** Extra JSON-LD nodes for this page */
+  schema?: Record<string, unknown>[];
+  noindex?: boolean;
+  /** Full <title> instead of "title | Celebris Vibe" */
+  fullTitle?: boolean;
+}
+
+const { title, description, image = 'hero', schema = [], noindex = false, fullTitle = false } = Astro.props;
+const pageTitle = fullTitle ? title : `${title} | ${SITE_NAME}`;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const og = await getImage({ src: photo(image), width: 1200, height: 630, fit: 'cover', format: 'jpg' });
+const ogUrl = new URL(og.src, Astro.site).href;
+
+const sameAs = Object.values(SOCIAL).filter(u => u.startsWith('http'));
+const organization = {
+  '@type': 'Organization',
+  '@id': abs(Astro.site, '#organization'),
+  name: SITE_NAME,
+  url: abs(Astro.site),
+  logo: abs(Astro.site, 'assets/apple-touch-icon.png'),
+  email: CONTACT_EMAIL,
+  slogan: SLOGAN,
+  description: 'DJ, водещ, озвучаване и осветление за сватби, частни тържества и корпоративни събития в България.',
+  areaServed: { '@type': 'Country', name: 'България' },
+  knowsLanguage: 'bg',
+  ...(sameAs.length ? { sameAs } : {}),
+};
+const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': [organization, ...schema] });
+---
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{pageTitle}</title>
+  <meta name="description" content={description} />
+  <link rel="canonical" href={canonical} />
+  {noindex && <meta name="robots" content="noindex" />}
+
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content={SITE_NAME} />
+  <meta property="og:locale" content="bg_BG" />
+  <meta property="og:title" content={pageTitle} />
+  <meta property="og:description" content={description} />
+  <meta property="og:url" content={canonical} />
+  <meta property="og:image" content={ogUrl} />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <meta name="theme-color" content="#121317" />
+  <link rel="icon" type="image/png" sizes="32x32" href={href('/assets/favicon.png')} />
+  <link rel="icon" type="image/svg+xml" href={href('/assets/favicon.svg')} />
+  <link rel="apple-touch-icon" href={href('/assets/apple-touch-icon.png')} />
+  <link rel="sitemap" type="application/xml" href={href('/sitemap.xml')} />
+
+  <!-- Apply the saved theme before first paint (dark is the default) -->
+  <script is:inline>
+    try { if (localStorage.getItem('cv-theme') === 'light') document.documentElement.dataset.theme = 'light'; } catch (e) {}
+  </script>
+  <script type="application/ld+json" set:html={jsonLd} />
+  <slot name="head" />
+</head>
+<body>
+  <Header />
+  <main>
+    <slot />
+  </main>
+  <Footer />
+</body>
+</html>
+
+<script>
+  import { initDraftLinks } from '../lib/draft';
+  initDraftLinks();
+</script>

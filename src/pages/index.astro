@@ -1,136 +1,106 @@
 ---
-import App from '../components/App';
-import '@fontsource/jost/300.css';
-import '@fontsource/jost/400.css';
-import '@fontsource/jost/500.css';
-import '@fontsource/jost/600.css';
-import '@fontsource/bricolage-grotesque/600.css';
-import '@fontsource/bricolage-grotesque/700.css';
-const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+import { Picture } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+import HeroBackdrop from '../components/HeroBackdrop.astro';
+import ServiceShowcase from '../components/ServiceShowcase.astro';
+import Occasions from '../components/Occasions.astro';
+import Extras from '../components/Extras.astro';
+import { ROUTES, SITE_NAME } from '../data/site';
+import { abs, href } from '../lib/urls';
+import { photo } from '../lib/photos';
+
+const website = {
+  '@type': 'WebSite',
+  '@id': abs(Astro.site, '#website'),
+  url: abs(Astro.site),
+  name: SITE_NAME,
+  inLanguage: 'bg',
+  publisher: { '@id': abs(Astro.site, '#organization') },
+};
+
+// Links from the old single-page site (/#services, and /#contact in printed QR codes)
+const legacy = { services: ROUTES.services, prices: ROUTES.prices, contact: ROUTES.contact, privacy: ROUTES.privacy };
+const legacyMap = Object.fromEntries(Object.entries(legacy).map(([k, v]) => [k, href(v)]));
 ---
-<!DOCTYPE html>
-<html lang="bg">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Celebris Vibe - DJ · Водещ · Озвучаване · Осветление</title>
-  <link rel="icon" type="image/png" sizes="32x32" href={`${base}assets/favicon.png`} />
-  <link rel="icon" type="image/svg+xml" href={`${base}assets/favicon.svg`} />
-  <link rel="apple-touch-icon" href={`${base}assets/apple-touch-icon.png`} />
-  <link rel="sitemap" type="application/xml" href={`${base}sitemap.xml`} />
-  <style is:global>
-    *, *::before, *::after { box-sizing: border-box; }
-    html, body { margin: 0; padding: 0; }
-    body {
-      font-family: 'Jost', Helvetica, sans-serif;
-      -webkit-font-smoothing: antialiased;
-    }
-    a { text-decoration: none; }
-    input, select, textarea, button { font-family: inherit; }
-    button:focus-visible,
-    input:focus-visible,
-    select:focus-visible,
-    textarea:focus-visible {
-      outline: 2px solid #8a6d3b;
-      outline-offset: 3px;
-    }
-    @keyframes cvspin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-    /* Five extras in one row on wide screens, so none is left alone on a row */
-    @media (min-width: 1400px) {
-      .cv-extras { grid-template-columns: repeat(5, minmax(0, 1fr)) !important; }
-    }
+<Base
+  title="Celebris Vibe - DJ, водещ, озвучаване и осветление за събития"
+  fullTitle
+  description="DJ, водещ, озвучаване и осветление за сватби, частни тържества и корпоративни събития - от един екип, от първата песен до последната. Провери свободна дата онлайн."
+  schema={[website]}
+>
+  <script slot="head" is:inline define:vars={{ legacyMap }}>
+    var target = legacyMap[location.hash.slice(1)];
+    if (target) location.replace(target);
+  </script>
 
-    /* Occasion cards: photo reveal on hover/focus */
-    .cv-occasion { transition: transform 350ms ease, border-color 350ms ease, box-shadow 350ms ease; }
-    .cv-occasion-img {
-      position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
-      opacity: 0; transform: scale(1.08); transition: opacity 450ms ease, transform 700ms ease;
-    }
-    .cv-occasion-shade {
-      position: absolute; inset: 0; opacity: 0; transition: opacity 450ms ease;
-      background: linear-gradient(to top, rgba(12,12,14,0.94) 20%, rgba(12,12,14,0.55));
-    }
-    .cv-occ-title, .cv-occ-desc, .cv-occ-chip, .cv-occ-go { transition: color 350ms ease, background 350ms ease, border-color 350ms ease, transform 350ms ease; }
-    .cv-occasion:hover, .cv-occasion:focus-visible {
-      transform: translateY(-6px);
-      border-color: var(--cv-gold) !important;
-      box-shadow: 0 30px 60px -30px rgba(0,0,0,0.55);
-    }
-    .cv-occasion:hover .cv-occasion-img, .cv-occasion:focus-visible .cv-occasion-img { opacity: 1; transform: scale(1); }
-    .cv-occasion:hover .cv-occasion-shade, .cv-occasion:focus-visible .cv-occasion-shade { opacity: 1; }
-    .cv-occasion:hover .cv-occ-title, .cv-occasion:focus-visible .cv-occ-title { color: #f2f1ec !important; }
-    .cv-occasion:hover .cv-occ-desc, .cv-occasion:focus-visible .cv-occ-desc { color: #d6d5d0 !important; }
-    .cv-occasion:hover .cv-occ-chip, .cv-occasion:focus-visible .cv-occ-chip { background: rgba(255,255,255,0.12) !important; color: #e3c995 !important; }
-    .cv-occasion:hover .cv-occ-go, .cv-occasion:focus-visible .cv-occ-go {
-      background: #c9ad78; border-color: #c9ad78 !important; color: #1b1d22 !important; transform: translateX(4px);
-    }
+  <section class="hero page-top split">
+    <HeroBackdrop />
+    <div>
+      <Eyebrow>DJ · Водещ · Озвучаване · Осветление</Eyebrow>
+      <h1 class="h1" style="margin-top:24px">Създаваме вайб.<br />Честваме живота.</h1>
+      <p class="lead" style="max-width:500px">
+        DJ, водещ, озвучаване и осветление за сватби, частни тържества и корпоративни събития - от един екип, от първата песен до последната.
+      </p>
+      <div class="btn-row">
+        <a href={href(ROUTES.contact)} data-draft='{"mode":"inquiry"}' class="btn btn-primary">Провери свободна дата</a>
+        <a href={href(ROUTES.contact)} data-draft='{"mode":"call"}' class="btn btn-outline">Поискай обаждане</a>
+      </div>
+    </div>
 
-    /* Hero backdrop */
-    .cv-hero > :not(.cv-hero-bg) { position: relative; z-index: 1; }
-    @keyframes cvBeam {
-      from { transform: rotate(-14deg); }
-      to { transform: rotate(14deg); }
-    }
-    @keyframes cvBokeh {
-      0%, 100% { opacity: 0; transform: translateY(0) scale(0.8); }
-      50% { opacity: var(--cv-o, 0.5); transform: translateY(-28px) scale(1); }
-    }
-    @keyframes cvEq {
-      from { transform: scaleY(0.12); }
-      to { transform: scaleY(1); }
-    }
-    @media (max-width: 640px) {
-      .cv-hero-bg > div:not(:last-child):nth-child(2n) { display: none; }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      .cv-hero-bg span { opacity: 0.25 !important; }
+    <div class="visual">
+      <div class="photo-frame circle">
+        <Picture
+          src={photo('hero')}
+          alt="Сватбено парти на дансинга"
+          formats={['avif', 'webp']}
+          widths={[320, 480, 720, 960]}
+          sizes="(min-width: 1000px) 460px, 82vw"
+          loading="eager"
+          fetchpriority="high"
+        />
+      </div>
+      <div class="ring" aria-hidden="true"><span /></div>
+      <a href={href(ROUTES.contact)} data-draft='{"mode":"inquiry"}' class="badge">
+        <span class="display badge-title">Провери за свободна дата</span>
+        <span class="badge-sub">Отговор за секунди</span>
+      </a>
+    </div>
+  </section>
 
-      * { transition: none !important; animation: none !important; }
-    }
-    /* Hover effects driven by CSS custom properties set on the wrapper */
-    .cv-btn-primary:hover {
-      background: var(--cv-gold) !important;
-    }
-    .cv-day:hover {
-      background: rgba(201,173,120,0.2) !important;
-    }
-    .cv-navlink:hover {
-      color: var(--cv-ink) !important;
-    }
-    .cv-social:hover {
-      color: var(--cv-gold) !important;
-      border-color: var(--cv-gold) !important;
-    }
-    .cv-card:hover {
-      transform: translateY(-4px) !important;
-      box-shadow: 0 24px 48px -28px rgba(0,0,0,0.35) !important;
-    }
-    .cv-event-card:hover {
-      transform: translateY(-6px) !important;
-      box-shadow: 0 30px 60px -30px rgba(0,0,0,0.4) !important;
-    }
-    .cv-event-row:hover {
-      transform: translateY(-2px) !important;
-    }
+  <section style="padding: 0 clamp(12px,2vw,24px) clamp(64px,8vw,112px)">
+    <ServiceShowcase />
+  </section>
 
-    /* Responsive overrides (inline styles need !important) */
-    @media (max-width: 900px) {
-      .cv-nav, .cv-header-cta { display: none !important; }
-      .cv-menu-btn { display: flex !important; }
-      .cv-theme-btn { margin-left: auto; }
-    }
-    @media (max-width: 640px) {
-      .cv-header-logo { height: 48px !important; }
-      .cv-plan-tabs { justify-self: stretch !important; flex-wrap: nowrap !important; }
-      .cv-plan-tabs > button { flex: 1; padding: 10px 6px !important; font-size: 14px !important; }
-      .cv-next-event { right: 0 !important; bottom: 0 !important; padding: 12px 16px !important; }
-    }
-  </style>
-</head>
-<body>
-  <App base={base} client:load />
-</body>
-</html>
+  <section class="section">
+    <Occasions showServicesLink />
+  </section>
+
+  <section class="section">
+    <Extras />
+  </section>
+</Base>
+
+<style>
+  .visual { position: relative; width: min(100%, 560px); aspect-ratio: 1; justify-self: center; }
+  .circle { position: absolute; inset: 9%; border-radius: 50%; }
+  .circle :global(img) { width: 100%; height: 100%; object-fit: cover; display: block; }
+  /* The brush circle from the logo, cropped and slowly rotating around the photo */
+  .ring { position: absolute; inset: 0; overflow: hidden; pointer-events: none; animation: cvspin 90s linear infinite; }
+  .ring span {
+    position: absolute; width: 273%; left: -86.8%; top: -72.2%; aspect-ratio: 2624 / 3142;
+    background: var(--logo);
+    -webkit-mask: url('/assets/celebris-logo-dark.svg') center / contain no-repeat;
+    mask: url('/assets/celebris-logo-dark.svg') center / contain no-repeat;
+  }
+  .badge {
+    position: absolute; right: -4px; bottom: 6%; display: flex; flex-direction: column; gap: 2px;
+    padding: 16px 20px; background: var(--paper); border: 1px solid var(--line); border-radius: 20px;
+    box-shadow: 0 24px 48px -24px rgba(0,0,0,0.35); color: var(--ink);
+  }
+  .badge-title { font-size: 22px; }
+  .badge-sub { font-size: 14px; }
+  @media (max-width: 640px) {
+    .badge { right: 0; bottom: 0; padding: 12px 16px; }
+  }
+</style>

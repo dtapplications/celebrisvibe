@@ -1,0 +1,18 @@
+---
+import Base from '../layouts/Base.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+import { NAV } from '../data/site';
+import { href } from '../lib/urls';
+---
+<Base title="Страницата не е намерена" description="Тази страница не съществува." noindex>
+  <section class="page-top">
+    <Eyebrow>404</Eyebrow>
+    <h1 class="h1" style="margin-top:24px">Тази песен<br />не е в плейлиста.</h1>
+    <p class="lead">Страницата, която търсиш, не съществува или е преместена.</p>
+    <div class="btn-row">
+      {NAV.map(([path, label], i) => (
+        <a href={href(path)} class:list={['btn', i === 0 ? 'btn-primary' : 'btn-outline']}>{label}</a>
+      ))}
+    </div>
+  </section>
+</Base>

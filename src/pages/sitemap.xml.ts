@@ -1,14 +1,21 @@
 import type { APIRoute } from 'astro';
+import { getCollection } from 'astro:content';
+import { ROUTES } from '../data/site';
+import { abs } from '../lib/urls';
 
-// The site is a single page with hash routes (#services, #prices…), which search engines
-// treat as one URL, so only real documents are listed here.
-const PATHS = ['', 'qr/'];
-
-export const GET: APIRoute = ({ site }) => {
-  const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+export const GET: APIRoute = async ({ site }) => {
+  const services = await getCollection('services');
+  const paths = [
+    ROUTES.home,
+    ROUTES.services,
+    ...services.sort((a, b) => a.data.order - b.data.order).map(s => `${ROUTES.services}${s.id}/`),
+    ROUTES.prices,
+    ROUTES.contact,
+    ROUTES.privacy,
+  ];
   const lastmod = new Date().toISOString().slice(0, 10);
-  const urls = PATHS.map(p => `  <url>
-    <loc>${new URL(base + p, site).href}</loc>
+  const urls = paths.map(p => `  <url>
+    <loc>${abs(site, p)}</loc>
     <lastmod>${lastmod}</lastmod>
   </url>`).join('\n');
 

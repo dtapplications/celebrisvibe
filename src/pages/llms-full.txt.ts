@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
+import { getCollection } from 'astro:content';
 import {
-  CONTACT_EMAIL, CONTACT_PHONE, EVENT_TYPES, SERVICES, SERVICE_DETAILS, SERVICE_GUIDE,
+  CONTACT_EMAIL, CONTACT_PHONE, EVENT_TYPES, ROUTES, SERVICE_GUIDE,
   EXTRAS, PACKAGES, PRICE_FACTORS, PRICE_COMPARE, ALWAYS_INCLUDED,
 } from '../data/site';
 import { abs, textResponse } from '../lib/urls';
@@ -8,25 +9,28 @@ import { abs, textResponse } from '../lib/urls';
 const list = (items: string[]) => items.map(i => `- ${i}`).join('\n');
 
 // Full site content in one Markdown document for AI assistants (https://llmstxt.org).
-export const GET: APIRoute = ({ site }) => {
-  const home = abs(site);
+export const GET: APIRoute = async ({ site }) => {
+  const contact = abs(site, ROUTES.contact);
+  const entries = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
 
-  const services = SERVICE_DETAILS.map(s => {
-    const highlights = SERVICES.find(x => x.key === s.key)?.items ?? [];
-    return `### ${s.title}
+  const services = entries.map(({ id, body, data: s }) => `### ${s.title}
 
-${s.lead}
+Страница: ${abs(site, `${ROUTES.services}${id}/`)}
+
+${(body ?? '').trim()}
 
 Какво включва:
 ${list(s.includes)}
 
 Подходящо за: ${s.fits.join(', ')}.
-${highlights.length ? `\nАкценти:\n${list(highlights.map(h => `${h.title}: ${h.desc} (${h.occasions.join(', ')})`))}\n` : ''}`;
-  }).join('\n');
+
+Акценти:
+${list(s.highlights.map(h => `${h.title}: ${h.desc} (${h.occasions.join(', ')})`))}
+`).join('\n');
 
   return textResponse(`# Celebris Vibe
 
-> DJ, водещ, професионално озвучаване и осветление за сватби, частни тържества и корпоративни събития в България. Уебсайт: ${home}
+> DJ, водещ, професионално озвучаване и осветление за сватби, частни тържества и корпоративни събития в България. Уебсайт: ${abs(site)}
 
 Този документ съдържа цялото съдържание на сайта в един текст. Цените са ориентировъчни; точна оферта се изпраща до един работен ден след запитване.
 
@@ -51,6 +55,8 @@ ${list(EXTRAS.map(e => `${e.title}: ${e.desc}`))}
 
 ## Цени
 
+Страница: ${abs(site, ROUTES.prices)}
+
 Няма фиксиран ценоразпис. Офертата е за цялото събитие, а не на час, и включва музика, техника, екип и транспорт.
 
 ### Изходни пакети (ориентировъчно)
@@ -71,7 +77,7 @@ ${PRICE_COMPARE.map(([q, a]) => `- ${q} ${a}`).join('\n')}
 
 ## Как се резервира
 
-1. Провери свободна дата на ${home}#contact
+1. Провери свободна дата на ${contact}
 2. Изпрати запитване с дата, локация, вид събитие и брой гости, или поискай обаждане
 3. Получи персонална оферта до един работен ден
 4. След потвърждение датата е запазена
@@ -80,6 +86,6 @@ ${PRICE_COMPARE.map(([q, a]) => `- ${q} ${a}`).join('\n')}
 
 - Имейл: ${CONTACT_EMAIL}
 - Телефон: ${CONTACT_PHONE}
-- Форма за запитване: ${home}#contact
+- Форма за запитване: ${contact}
 `);
 };

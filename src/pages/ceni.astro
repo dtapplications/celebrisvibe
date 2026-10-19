@@ -1,0 +1,164 @@
+---
+import Base from '../layouts/Base.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+import HeroBackdrop from '../components/HeroBackdrop.astro';
+import Estimator from '../components/Estimator.astro';
+import Icon from '../components/Icon.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { ALWAYS_INCLUDED, PACKAGES, PRICE_COMPARE, PRICE_FACTORS, ROUTES } from '../data/site';
+import { abs, href } from '../lib/urls';
+
+const schema = [{
+  '@type': 'OfferCatalog',
+  name: 'Изходни пакети',
+  url: abs(Astro.site, ROUTES.prices),
+  itemListElement: PACKAGES.map(p => ({
+    '@type': 'Offer',
+    name: p.name,
+    description: `${p.tagline}: ${p.items.join(', ')}`,
+    priceSpecification: { '@type': 'PriceSpecification', minPrice: p.from, priceCurrency: 'EUR' },
+    seller: { '@id': abs(Astro.site, '#organization') },
+  })),
+}];
+---
+<Base
+  title="Цени на DJ, озвучаване и осветление"
+  description="Ориентировъчни цени за DJ, водещ, озвучаване и осветление: изходни пакети от €200, калкулатор и от какво зависи цената. Точна оферта до един работен ден."
+  image="light-party"
+  schema={schema}
+>
+  <section class="hero page-top">
+    <HeroBackdrop />
+    <div class="split">
+      <div>
+        <Eyebrow>Цени</Eyebrow>
+        <h1 class="h1" style="margin-top:24px">Една оферта.<br />Цялото събитие.</h1>
+        <p class="lead" style="max-width:620px">
+          Всяко събитие е различно, затова не работим с фиксиран ценоразпис. Изпрати ни едно запитване и до един работен ден ще получиш точна оферта.
+        </p>
+        <div class="btn-row">
+          <a href={href(ROUTES.contact)} data-draft='{"mode":"inquiry"}' class="btn btn-primary">Получи оферта</a>
+          <a href={href(ROUTES.contact)} data-draft='{"mode":"call"}' class="btn btn-outline">Поискай обаждане</a>
+        </div>
+      </div>
+      <Estimator />
+    </div>
+  </section>
+
+  <section class="section">
+    <h2 class="h2-sm" style="margin-top:clamp(64px,8vw,112px)">От какво зависи цената</h2>
+    <div class="factors">
+      {PRICE_FACTORS.map((f, i) => (
+        <div class="card factor">
+          <span class="num factor-num">0{i + 1}</span>
+          <h3 class="display factor-title">{f.title}</h3>
+          <p class="factor-desc">{f.desc}</p>
+        </div>
+      ))}
+    </div>
+
+    <div class="included">
+      <div>
+        <h2 class="display included-title">Винаги включено в офертата</h2>
+        <p class="included-desc">Основата на всяко събитие е в цената - без доплащане за техниката, която прави вечерта възможна.</p>
+      </div>
+      <ul>
+        {ALWAYS_INCLUDED.map(x => (
+          <li><span class="tick"><Icon name="check" size={15} /></span>{x}</li>
+        ))}
+      </ul>
+    </div>
+
+    <h2 class="h2-sm" style="margin-top:clamp(64px,8vw,112px)">Изходни пакети</h2>
+    <p class="sub" style="margin:12px 0 36px">Ориентир, от който започваме. Крайната цена уточняваме спрямо факторите по-горе.</p>
+    <div class="packages">
+      {PACKAGES.map(p => (
+        <div class:list={['package', p.highlight && 'is-highlight']}>
+          <div class="pkg-body">
+            <div class="pkg-tagline">{p.tagline}</div>
+            <h3 class="display pkg-name">{p.name}</h3>
+            <div class="display pkg-price">{p.price}</div>
+            <ul class="pkg-items">{p.items.map(item => <li>{item}</li>)}</ul>
+          </div>
+          <div class="pkg-foot">
+            <a href={href(ROUTES.contact)} data-draft='{"mode":"inquiry"}' class:list={['btn', 'btn-sm', 'pkg-btn', p.highlight ? 'btn-paper' : 'btn-outline']}>Поискай оферта</a>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <div class="explain">
+      <div>
+        <h2 class="h3">Как се формира цената</h2>
+        <p class="sub" style="margin-top:24px;line-height:1.65">След като ни изпратиш дата, локация и вид събитие, уточняваме програмата и техниката, която е нужна.</p>
+        <p class="sub" style="line-height:1.65">Офертата покрива цялото събитие - музика, техника, екип и транспорт - така че знаеш точната сума предварително.</p>
+        <blockquote class="display">Офертата е за цялото събитие, а не на час - без изненади в края на вечерта.</blockquote>
+      </div>
+      <div>
+        <h2 class="h3">Какво да сравниш</h2>
+        <ol class="card compare">
+          {PRICE_COMPARE.map(([q, a], i) => (
+            <li>
+              <span class="num">0{i + 1}</span>
+              <span>
+                <span class="display q">{q}</span>
+                <span class="a">{a}</span>
+              </span>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
+
+    <CtaBand actions={[
+      { label: 'Виж услугите', path: ROUTES.services },
+      { label: 'Получи оферта', path: ROUTES.contact, draft: { mode: 'inquiry' }, primary: true },
+    ]}>Точна оферта до<br />един работен ден.</CtaBand>
+  </section>
+</Base>
+
+<style>
+  .factors { margin-top: 36px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 16px; }
+  .factor { display: flex; flex-direction: column; gap: 12px; padding: 28px; }
+  .factor-num { font-size: 40px; line-height: 1; }
+  .factor-title { margin: 0; font-size: 24px; letter-spacing: -0.02em; line-height: 1.1; }
+  .factor-desc { margin: 0; font-size: 16px; font-weight: 300; line-height: 1.5; color: var(--body); }
+
+  .included {
+    margin-top: 16px; padding: clamp(28px, 3.5vw, 44px); border-radius: 28px; background: var(--ink); color: var(--paper);
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 28px clamp(32px, 4vw, 64px); align-items: center;
+  }
+  .included-title { margin: 0; font-size: clamp(26px, 2.8vw, 38px); line-height: 1.1; }
+  .included-desc { margin: 12px 0 0; font-size: 16px; font-weight: 300; line-height: 1.55; color: var(--band-text); max-width: 420px; }
+  .included ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px 24px; }
+  .included li { display: flex; align-items: center; gap: 12px; font-size: 16px; }
+  .tick { flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--band-gold); color: var(--band-gold); display: flex; align-items: center; justify-content: center; }
+
+  .packages { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 16px; }
+  .package { display: flex; flex-direction: column; border-radius: 28px; background: var(--card); border: 1px solid var(--line); overflow: hidden; }
+  .package.is-highlight { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+  .pkg-body { padding: 32px 28px 24px; flex: 1; }
+  .pkg-tagline { font-size: 13px; color: var(--gold); margin-bottom: 8px; }
+  .is-highlight .pkg-tagline { color: var(--band-gold); }
+  .pkg-name { margin: 0; font-size: 36px; letter-spacing: -0.03em; line-height: 1; }
+  .pkg-price { font-weight: 700; font-size: 28px; margin-top: 20px; }
+  .pkg-items { list-style: none; padding: 0; margin: 24px 0 0; display: flex; flex-direction: column; gap: 10px; }
+  .pkg-items li { display: flex; align-items: center; gap: 10px; font-size: 15px; color: var(--body); }
+  .is-highlight .pkg-items li { color: var(--band-text); }
+  .pkg-items li::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--gold); flex-shrink: 0; }
+  .is-highlight .pkg-items li::before { background: var(--band-gold); }
+  .pkg-foot { padding: 0 28px 28px; }
+  .pkg-btn { width: 100%; }
+
+  .explain { margin-top: clamp(64px, 8vw, 112px); display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: clamp(32px, 4vw, 64px); align-items: start; }
+  blockquote {
+    margin: 36px 0 0; padding: 4px 0 4px 28px; border-left: 3px solid var(--gold); max-width: 560px;
+    letter-spacing: -0.02em; font-size: clamp(22px, 2.2vw, 30px); line-height: 1.25;
+  }
+  .compare { list-style: none; margin: 24px 0 0; padding: 4px 28px; }
+  .compare li { display: grid; grid-template-columns: 40px 1fr; gap: 12px; padding: 22px 0; }
+  .compare li + li { border-top: 1px solid var(--line); }
+  .compare .num { font-size: 15px; padding-top: 3px; }
+  .q { display: block; font-size: 20px; line-height: 1.25; letter-spacing: 0; }
+  .a { display: block; font-size: 15px; font-weight: 300; line-height: 1.55; color: var(--body); margin-top: 6px; }
+</style>

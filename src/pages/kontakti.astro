@@ -1,0 +1,87 @@
+---
+import Base from '../layouts/Base.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+import Icon from '../components/Icon.astro';
+import Logo from '../components/Logo.astro';
+import ContactForm from '../components/ContactForm.astro';
+import { CONTACT_EMAIL, CONTACT_PHONE, ROUTES } from '../data/site';
+import { abs } from '../lib/urls';
+
+const schema = [{
+  '@type': 'ContactPage',
+  url: abs(Astro.site, ROUTES.contact),
+  name: 'Контакти и проверка на свободна дата',
+  about: { '@id': abs(Astro.site, '#organization') },
+}];
+---
+<Base
+  title="Контакти - провери свободна дата"
+  description="Провери онлайн дали датата ти е свободна и изпрати запитване за DJ, водещ, озвучаване и осветление. Отговаряме до един работен ден."
+  schema={schema}
+>
+  <section class="page-top">
+    <div class="grid">
+      <div>
+        <Eyebrow>Контакти</Eyebrow>
+        <h1 class="h1 title">Запази дата.</h1>
+        <p class="lead" style="margin-top:24px;font-size:19px;max-width:440px">
+          Изпрати ни детайлите и ще отговорим в рамките на един работен ден.
+        </p>
+        <div class="links">
+          <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
+          <a href={`tel:${CONTACT_PHONE.replace(/[^\d+]/g, '')}`}>{CONTACT_PHONE}</a>
+        </div>
+
+        <div class="card check">
+          <h2 class="display check-title">Провери свободна дата</h2>
+          <div data-date-check></div>
+          <div aria-live="polite">
+            <div data-status="checking" class="checking" hidden>Проверка…</div>
+            <div data-status="available" class="notice notice-ok status" hidden>
+              <span class="dot ok"></span>
+              <span class="status-text">Датата изглежда <strong>свободна</strong>. Добавихме я във формата - изпрати запитване и ще я потвърдим.</span>
+              <button type="button" class="to-form" data-to-form>Към формата <Icon name="arrowRight" size={16} /></button>
+            </div>
+            <div data-status="taken" class="notice notice-err status" hidden>
+              <span class="dot err"></span>
+              <span>За съжаление датата е <strong>заета</strong>. Обади ни се - понякога можем да предложим решение.</span>
+            </div>
+            <div data-status="unknown" class="notice notice-info" hidden>
+              В момента не можем да проверим автоматично. Изпрати запитване или ни се обади на {CONTACT_PHONE} - ще отговорим бързо.
+            </div>
+          </div>
+        </div>
+
+        <div class="about">
+          <Logo height={48} />
+          <p>
+            Celebris Vibe е изграден на идеята, че доброто събитие е повече от музика - това е правилната атмосфера в правилния момент. Подхождаме към всяко събитие индивидуално.
+          </p>
+        </div>
+      </div>
+
+      <ContactForm />
+    </div>
+  </section>
+</Base>
+
+<style>
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 64px; align-items: start; }
+  .title { margin-top: 20px; font-size: clamp(52px, 7vw, 96px); line-height: 1; }
+  .links { margin-top: 36px; display: flex; flex-direction: column; gap: 8px; font-size: 17px; }
+  .links a:hover { color: var(--gold); }
+  .check { margin-top: 40px; padding: 24px; border-radius: 20px; display: flex; flex-direction: column; gap: 16px; }
+  .check-title { margin: 0; font-size: 22px; letter-spacing: -0.02em; }
+  .checking { font-size: 14px; color: var(--muted); }
+  .status { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .status-text { flex: 1 1 200px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .dot.ok { background: #4caf50; }
+  .dot.err { background: #e57373; }
+  .to-form {
+    display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 999px; border: none;
+    background: var(--ink); color: var(--paper); font-size: 14px; font-weight: 500; cursor: pointer;
+  }
+  .about { margin-top: 56px; padding-top: 40px; border-top: 1px solid var(--line); }
+  .about p { margin: 20px 0 0; font-size: 17px; font-weight: 300; line-height: 1.6; color: var(--body); max-width: 400px; }
+</style>

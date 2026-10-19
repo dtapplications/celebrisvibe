@@ -1,12 +1,13 @@
 ---
 import QRCode from 'qrcode';
-import { abs } from '../lib/urls';
+import { abs, href } from '../lib/urls';
+import { ROUTES } from '../data/site';
 import '@fontsource/jost/300.css';
 import '@fontsource/jost/500.css';
 import '@fontsource/bricolage-grotesque/600.css';
 
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
-const CONTACT_URL = abs(Astro.site, '#contact');
+const CONTACT_URL = abs(Astro.site, ROUTES.contact);
 const qrSvg = await QRCode.toString(CONTACT_URL, {
   type: 'svg',
   margin: 2,
@@ -23,7 +24,8 @@ const qrSvg = await QRCode.toString(CONTACT_URL, {
   <link rel="icon" type="image/png" sizes="32x32" href={`${base}assets/favicon.png`} />
   <link rel="icon" type="image/svg+xml" href={`${base}assets/favicon.svg`} />
   <link rel="apple-touch-icon" href={`${base}assets/apple-touch-icon.png`} />
-  <title>Контакти - Celebris Vibe</title>
+  <title>QR код за контакт - Celebris Vibe</title>
+  <meta name="robots" content="noindex" />
   <style>
     *, *::before, *::after { box-sizing: border-box; }
     body {
@@ -134,7 +136,7 @@ const qrSvg = await QRCode.toString(CONTACT_URL, {
 
     <div class="btn-row">
       <button class="btn btn-solid" onclick="window.print()">Принтирай / Запази като PDF</button>
-      <a href={`${base}#contact`} class="btn btn-outline">Отвори формата</a>
+      <a href={href(ROUTES.contact)} class="btn btn-outline">Отвори формата</a>
     </div>
   </div>
 

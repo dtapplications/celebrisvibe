@@ -1,6 +1,23 @@
-// Site content shared by the page and the generated llms.txt / llms-full.txt.
+// Site content shared by the pages and the generated llms.txt / llms-full.txt.
+// Service content lives in src/content/services/*.mdx.
 
-export type ServiceItem = { title: string; desc: string; occasions: string[]; photo: string };
+export const SITE_NAME = 'Celebris Vibe';
+export const SLOGAN = 'Създаваме Вайб, Честваме Живота.';
+
+export const ROUTES = {
+  home: '/',
+  services: '/uslugi/',
+  prices: '/ceni/',
+  contact: '/kontakti/',
+  privacy: '/poveritelnost/',
+} as const;
+
+export const NAV: [string, string][] = [
+  [ROUTES.home, 'Начало'],
+  [ROUTES.services, 'Услуги'],
+  [ROUTES.prices, 'Цени'],
+  [ROUTES.contact, 'Контакти'],
+];
 
 export const CONTACT_EMAIL = 'hello@celebrisvibe.com';
 
@@ -36,105 +53,6 @@ export const EVENT_TYPES = [
     subtitle: 'Конференции · Лансирания · Тиймбилдинги',
     desc: 'Професионално техническо и музикално осигуряване за фирмени партита, презентации, конференции, тиймбилдинги, лансирания, коктейли и семинари.',
     tags: ['DJ', 'Водещ', 'Озвучаване', 'Безжични микрофони', 'Фонова музика'],
-  },
-];
-
-export const SERVICES: { key: string; title: string; intro: string; items: ServiceItem[] }[] = [
-  {
-    key: 'dj',
-    title: 'DJ & Водещ',
-    intro: 'Музика, подбрана за публиката и момента, и водещ, който държи програмата.',
-    items: [
-      { title: 'Музикален подбор', photo: 'dj-music', occasions: ['Сватби', 'Частни', 'Корпоративни'],
-        desc: 'Преди събитието уточняваме любими изпълнители, жанрове и песни, които не трябва да звучат. На място четем дансинга и сменяме темпото според гостите.' },
-      { title: 'Водене на програмата', photo: 'dj-mic', occasions: ['Сватби', 'Частни', 'Корпоративни'],
-        desc: 'Професионален водещ представя ключовите моменти, речите, игрите и гостите и държи вечерта в график.' },
-      { title: 'Ключови моменти', photo: 'dj-moments', occasions: ['Сватби', 'Частни'],
-        desc: 'Посрещане, първи танц, торта, хвърляне на букета - всеки момент има своя песен и точен тайминг.' },
-      { title: 'Игри и забавления', photo: 'dj-crowd', occasions: ['Сватби', 'Частни', 'Корпоративни'],
-        desc: 'Интерактивни игри и музикални блокове, които вдигат гостите от масите и пълнят дансинга.' },
-      { title: 'Координация с екипа', photo: 'dj-coordination', occasions: ['Сватби', 'Корпоративни'],
-        desc: 'Синхронизираме се с ресторанта, фотографа и видеографа, за да няма изпуснат момент.' },
-    ],
-  },
-  {
-    key: 'sound',
-    title: 'Озвучаване',
-    intro: 'Техника, подбрана спрямо залата, броя гости и програмата.',
-    items: [
-      { title: 'Звукова система по мярка', photo: 'sound-system', occasions: ['Сватби', 'Частни', 'Корпоративни'],
-        desc: 'Колони, субуфери и пулт, оразмерени за залата - чист звук на дансинга и комфортен на масите.' },
-      { title: 'Безжични микрофони', photo: 'sound-wireless', occasions: ['Сватби', 'Корпоративни'],
-        desc: 'Микрофони за речи, тостове и презентации, готови и тествани преди първия гост.' },
-      { title: 'Конференции и презентации', photo: 'sound-conference', occasions: ['Корпоративни'],
-        desc: 'Озвучаване на конференции, семинари и лансирания - с връзка към лаптоп, проектор и видео.' },
-      { title: 'Фонова музика', photo: 'sound-background', occasions: ['Сватби', 'Частни', 'Корпоративни'],
-        desc: 'Ненатрапчива музика за коктейл, вечеря и посрещане, която не пречи на разговорите.' },
-      { title: 'Техник на място', photo: 'sound-tech', occasions: ['Сватби', 'Частни', 'Корпоративни'],
-        desc: 'Саундчек преди началото и техник през цялото събитие - ти не мислиш за кабели.' },
-    ],
-  },
-  {
-    key: 'light',
-    title: 'Осветление',
-    intro: 'Светлина, която прави атмосферата и снимките по-добри.',
-    items: [
-      { title: 'Парти осветление', photo: 'light-party', occasions: ['Сватби', 'Частни', 'Корпоративни'],
-        desc: 'Движещи глави и цветни прожектори, синхронизирани с музиката, за истинско парти настроение.' },
-      { title: 'Лазери и ефекти', photo: 'light-lasers', occasions: ['Частни', 'Корпоративни'],
-        desc: 'Лазери, дим и ефекти за кулминацията на вечерта. Безопасно и съгласувано със залата.' },
-      { title: 'Декоративно осветление', photo: 'light-decor', occasions: ['Сватби', 'Частни'],
-        desc: 'Архитектурно осветяване на залата, гирлянди и топли акценти в цветовете на събитието.' },
-      { title: 'Сценично осветление', photo: 'light-stage', occasions: ['Корпоративни', 'Частни'],
-        desc: 'Светлина за сцена, подиум и говорители - ясно видими на живо и на видео.' },
-      { title: 'Атмосфера до края', photo: 'light-finale', occasions: ['Сватби', 'Частни', 'Корпоративни'],
-        desc: 'Светлинни сцени за всяка част от вечерта - от посрещането до последната песен.' },
-    ],
-  },
-];
-
-export const SERVICE_DETAILS = [
-  {
-    key: 'dj', title: 'DJ & Водещ', photo: 'dj-music', formServices: ['DJ', 'Водещ'],
-    lead: 'DJ, който чете публиката, и водещ, който държи програмата. Подготвяме музиката заедно с теб преди събитието и я водим на живо според настроението на гостите.',
-    includes: [
-      'Разговор за музикалните предпочитания и „забранени“ песни',
-      'Плейлист за ключовите моменти - посрещане, първи танц, торта',
-      'DJ сет за цялото събитие',
-      'Водещ за програмата, речите и игрите',
-      'Безжичен микрофон за речи и тостове',
-      'Координация с ресторанта, фотографа и видеографа',
-    ],
-    fits: ['Сватби', 'Рождени дни', 'Годишнини', 'Партита', 'Фирмени партита'],
-    quote: 'Добрият DJ не просто пуска песни - той води вечерта.',
-  },
-  {
-    key: 'sound', title: 'Озвучаване', photo: 'sound-system', formServices: ['Озвучаване'],
-    lead: 'Звук, оразмерен за залата и броя гости - ясен на дансинга и комфортен на масите. Предлагаме го и като самостоятелна услуга за конференции, презентации и семинари.',
-    includes: [
-      'Колони и субуфери, подбрани за залата',
-      'Пулт и цялото окабеляване',
-      'Безжични микрофони за речи и презентации',
-      'Връзка с лаптоп, проектор и видео',
-      'Саундчек преди началото',
-      'Техник на място през цялото събитие',
-    ],
-    fits: ['Сватби', 'Конференции', 'Презентации', 'Семинари', 'Коктейли', 'Тиймбилдинги'],
-    quote: 'Когато звукът е добър, никой не го забелязва - просто всички се забавляват.',
-  },
-  {
-    key: 'light', title: 'Осветление', photo: 'light-party', formServices: ['Осветление'],
-    lead: 'Парти и декоративно осветление, което прави атмосферата и снимките по-добри. Подбираме го според залата, формата и цветовете на събитието.',
-    includes: [
-      'Движещи глави и цветни прожектори',
-      'Светлинни сцени, синхронизирани с музиката',
-      'Декоративно осветяване на залата',
-      'Светлина за сцена, подиум и говорители',
-      'Дим и ефекти за кулминацията (по заявка)',
-      'Монтаж и демонтаж от нашия екип',
-    ],
-    fits: ['Сватби', 'Рождени дни', 'Партита', 'Фирмени партита', 'Лансирания'],
-    quote: 'Светлината превръща залата в дансинг.',
   },
 ];
 
@@ -176,24 +94,66 @@ export const PACKAGES = [
   {
     name: 'DJ',
     tagline: 'Само музика',
-    price: 'От €200',
+    price: 'От €200', from: 200,
     items: ['Подготовка на музиката', 'DJ програма', 'Монтаж на оборудването'],
     highlight: false,
   },
   {
     name: 'DJ + Озвучаване',
     tagline: 'Музика + професионално аудио',
-    price: 'От €500',
+    price: 'От €500', from: 500,
     items: ['DJ програма', 'Професионална звукова система', 'Съобразено със залата и брой гости'],
     highlight: true,
   },
   {
     name: 'Пълен Вайб',
     tagline: 'Пълното изживяване',
-    price: 'От €900',
+    price: 'От €900', from: 900,
     items: ['DJ', 'Водещ', 'Звукова система', 'Осветление', 'Подготовка на програма и координация'],
     highlight: false,
   },
 ];
 
 export const ALWAYS_INCLUDED = ['Звукова система', 'Микрофон за речи', 'Основно парти осветление', 'Монтаж и демонтаж', 'Музикална подготовка'];
+
+// ─── Contact form options ─────────────────────────────────────────────────────
+
+export const FORM_EVENT_TYPES = ['Частно събитие', 'Сватба', 'Корпоративно', 'Презентация', 'Друго'];
+export const FORM_SERVICES = ['DJ', 'Водещ', 'Озвучаване', 'Осветление', 'Пълен пакет', 'Друго'];
+export const GUEST_OPTIONS = ['До 50', '50 – 150', '150 – 300', '300+'];
+export const CALL_TIMES = ['Сутринта', 'Следобед', 'Вечерта'];
+
+// ─── Price estimator ──────────────────────────────────────────────────────────
+
+// MOCK pricing for the estimator - replace with the client's real rules before launch.
+// Calibrated to the packages for a 4-hour private event, 50-150 guests:
+// DJ + sound €500 · + host + lights €900 ("Пълен вайб"). Sound is always included.
+export const ESTIMATE = {
+  base: 200,                 // DJ, up to the included hours
+  includedHours: 4,
+  extraHour: 50,
+  sound: { 'До 50': 150, '50 – 150': 300, '150 – 300': 450, '300+': 600 } as Record<string, number>,
+  type: { private: 0, wedding: 100, corporate: 50 } as Record<string, number>,
+  host: 200,
+  lights: 200,
+};
+
+// [key, chip label, contact form event type]
+export const ESTIMATE_TYPES: [string, string, string][] = [
+  ['wedding', 'Сватба', 'Сватба'],
+  ['private', 'Частно', 'Частно събитие'],
+  ['corporate', 'Фирмено', 'Корпоративно'],
+];
+
+export type EstimateInput = { type: string; hours: number; guests: string; host: boolean; lights: boolean };
+
+export const ESTIMATE_DEFAULTS: EstimateInput = { type: 'wedding', hours: 5, guests: '50 – 150', host: true, lights: true };
+
+export function estimatePrice(i: EstimateInput): number {
+  return ESTIMATE.base
+    + Math.max(0, i.hours - ESTIMATE.includedHours) * ESTIMATE.extraHour
+    + ESTIMATE.sound[i.guests]
+    + ESTIMATE.type[i.type]
+    + (i.host ? ESTIMATE.host : 0)
+    + (i.lights ? ESTIMATE.lights : 0);
+}
