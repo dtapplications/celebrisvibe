@@ -6,10 +6,10 @@ import { href } from '../lib/urls';
 <div class="wrap">
   <form class="card est" data-estimator onsubmit="return false">
     <div class="fields">
-      <div class="display heading">Пресметни ориентировъчно</div>
+      <div class="display heading">Изчисли ориентировъчна цена</div>
 
       <fieldset>
-        <legend class="field-label">Повод</legend>
+        <legend class="field-label">Вид събитие</legend>
         <div class="choices">
           {ESTIMATE_TYPES.map(([key, label]) => (
             <label class="choice"><input type="radio" name="type" value={key} checked={key === D.type} /><span>{label}</span></label>
@@ -35,7 +35,7 @@ import { href } from '../lib/urls';
       </fieldset>
 
       <fieldset>
-        <legend class="field-label">Добави</legend>
+        <legend class="field-label">Допълнителни услуги</legend>
         <div class="choices">
           <label class="choice choice-box"><input type="checkbox" name="host" checked={D.host} /><span>Водещ</span></label>
           <label class="choice choice-box"><input type="checkbox" name="lights" checked={D.lights} /><span>Осветление</span></label>
@@ -54,7 +54,7 @@ import { href } from '../lib/urls';
     </div>
   </form>
   <p class="note">
-    * Ориентировъчна цена, изчислена автоматично за събитие в града. Не е оферта. Точната сума зависи от залата, програмата, техниката и локацията и я потвърждаваме в персонална оферта до един работен ден.
+    * Посочената цена е автоматично изчислен ориентир и не представлява окончателна оферта. Крайната цена зависи от мястото, продължителността, програмата, необходимото оборудване и допълнителните услуги. След запитване ще получиш персонална оферта до един работен ден.
   </p>
 </div>
 

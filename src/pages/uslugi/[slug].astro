@@ -80,7 +80,7 @@ const schema = [
           <div class="hl-body">
             <div class="tags">{h.occasions.map(o => <span class="tag">{o}</span>)}</div>
             <h3 class="display hl-title">{h.title}</h3>
-            <p class="hl-desc">{h.desc}</p>
+            <p class="hl-desc">{h.pageDesc ?? h.desc}</p>
           </div>
         </div>
       ))}

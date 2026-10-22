@@ -170,9 +170,9 @@ test.describe('interactive sections', () => {
 });
 
 test.describe('contact form', () => {
-  test('"request a call" switches the form to call mode', async ({ page }) => {
+  test('"contact us" switches the form to call mode', async ({ page }) => {
     await page.goto('/');
-    await page.locator('main').getByRole('link', { name: 'Поискай обаждане' }).click();
+    await page.locator('main').getByRole('link', { name: 'Свържи се с нас' }).click();
     await expect(page).toHaveURL('/kontakti/');
     await expect(page.locator('[data-contact]')).toHaveAttribute('data-mode', 'call');
     await expect(page.locator('input[name="email"]')).toBeHidden();

@@ -27,7 +27,7 @@ const legacyMap = Object.fromEntries(Object.entries(legacy).map(([k, v]) => [k, 
   title="Celebris Vibe - DJ, водещ, озвучаване и осветление за събития"
   fullTitle
   og="home"
-  description="DJ, водещ, озвучаване и осветление за сватби, частни тържества и корпоративни събития - от първата песен до последната. Провери свободна дата онлайн."
+  description="DJ, водещ, професионално озвучаване и осветление за сватби, частни и корпоративни събития — цялостно решение за твоя повод. Провери свободна дата онлайн."
   schema={[website]}
 >
   <script slot="head" is:inline define:vars={{ legacyMap }}>
@@ -39,13 +39,13 @@ const legacyMap = Object.fromEntries(Object.entries(legacy).map(([k, v]) => [k, 
     <HeroBackdrop />
     <div>
       <Eyebrow>DJ · Водещ · Озвучаване · Осветление</Eyebrow>
-      <h1 class="h1" style="margin-top:24px">Създаваме вайб.<br />Честваме живота.</h1>
+      <h1 class="h1" style="margin-top:24px">Създаваме настроение.<br />Празнуваме живота.</h1>
       <p class="lead" style="max-width:500px">
-        DJ, водещ, озвучаване и осветление за сватби, частни тържества и корпоративни събития - от един екип, от първата песен до последната.
+        DJ, водещ, професионално озвучаване и осветление за сватби, частни и корпоративни събития — цялостно решение за твоя повод.
       </p>
       <div class="btn-row">
         <a href={href(ROUTES.contact)} data-draft='{"mode":"inquiry"}' class="btn btn-primary">Провери свободна дата</a>
-        <a href={href(ROUTES.contact)} data-draft='{"mode":"call"}' class="btn btn-outline">Поискай обаждане</a>
+        <a href={href(ROUTES.contact)} data-draft='{"mode":"call"}' class="btn btn-outline">Свържи се с нас</a>
       </div>
     </div>
 
@@ -63,14 +63,21 @@ const legacyMap = Object.fromEntries(Object.entries(legacy).map(([k, v]) => [k, 
       </div>
       <div class="ring" aria-hidden="true"><span /></div>
       <a href={href(ROUTES.contact)} data-draft='{"mode":"inquiry"}' class="badge">
-        <span class="display badge-title">Провери за свободна дата</span>
-        <span class="badge-sub">Отговор за секунди</span>
+        <span class="display badge-title">Провери свободна дата</span>
+        <span class="badge-sub">Предварителна проверка за секунди</span>
       </a>
     </div>
   </section>
 
   <section style="padding: 0 clamp(12px,2vw,24px) clamp(64px,8vw,112px)">
     <ServiceShowcase />
+  </section>
+
+  <section class="section approach">
+    <h2 class="h2-sm">Индивидуален подход към всяко събитие.</h2>
+    <p class="sub">
+      Усещаме хората, следваме настроението и съобразяваме музиката с енергията на вечерта. Подхождаме индивидуално към всеки повод, защото вярваме, че незабравимото събитие се изгражда с усет и внимание към детайла.
+    </p>
   </section>
 
   <section class="section">
@@ -83,6 +90,11 @@ const legacyMap = Object.fromEntries(Object.entries(legacy).map(([k, v]) => [k, 
 </Base>
 
 <style>
+  .approach {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+    gap: 24px clamp(32px, 5vw, 80px); align-items: end;
+  }
+  .approach .sub { margin: 0; font-size: 19px; line-height: 1.6; }
   .visual { position: relative; width: min(100%, 560px); aspect-ratio: 1; justify-self: center; }
   .circle { position: absolute; inset: 9%; border-radius: 50%; }
   .circle :global(img) { width: 100%; height: 100%; object-fit: cover; display: block; }

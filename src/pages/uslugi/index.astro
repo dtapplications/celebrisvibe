@@ -35,7 +35,7 @@ const schema = [
 ---
 <Base
   title="Услуги - DJ, водещ, озвучаване и осветление"
-  description="DJ и водещ, собствено озвучаване и осветление - за сватби, частни партита и корпоративни събития. Избери отделна услуга или ги комбинирай в един пакет."
+  description="Професионален DJ и водещ, собствено озвучаване и осветление за сватби, частни и корпоративни събития. Избери отделна услуга или ги комбинирай."
   og="services"
   schema={schema}
 >
@@ -44,9 +44,9 @@ const schema = [
     <div class="split">
       <div>
         <Eyebrow>Услуги</Eyebrow>
-        <h1 class="h1" style="margin-top:24px">DJ, звук и светлина<br />за всеки повод.</h1>
+        <h1 class="h1" style="margin-top:24px">Всичко необходимо за правилната атмосфера.</h1>
         <p class="lead">
-          Професионален DJ и водещ, собствено озвучаване и осветление - за сватби, частни партита и корпоративни събития. Избери отделна услуга или ги комбинирай в един пакет.
+          Професионален DJ и водещ, собствено озвучаване и осветление за сватби, частни и корпоративни събития. Избери отделна услуга или ги комбинирай според твоя повод.
         </p>
         <div class="btn-row">
           <a href={href(ROUTES.contact)} data-draft='{"mode":"inquiry"}' class="btn btn-primary">Провери свободна дата</a>
@@ -79,7 +79,7 @@ const schema = [
         <span class="num">0{i + 1}</span>
         <div>
           <h2 class="h3"><a href={href(serviceUrl(s.slug))}>{s.title}</a></h2>
-          <p class="sub">{s.description}</p>
+          <p class="sub">{s.summary}</p>
           <div class="tags" style="margin-top:16px">{s.fits.map(f => <span class="tag">{f}</span>)}</div>
         </div>
         <a href={href(serviceUrl(s.slug))} class="btn btn-outline btn-sm">Какво включва</a>
@@ -90,8 +90,8 @@ const schema = [
     <div class="stack-gap"><Extras /></div>
 
     <div class="stack-gap">
-      <h2 class="h2-sm">Коя услуга за какъв повод?</h2>
-      <p class="sub" style="margin-bottom:36px">Не си сигурен какво ти трябва? Ето от какво започват повечето ни клиенти.</p>
+      <h2 class="h2-sm">Коя услуга е подходяща за твоя повод?</h2>
+      <p class="sub" style="margin-bottom:36px">Не си сигурен откъде да започнеш? Ето няколко типични решения според формата и броя гости.</p>
       <div class="guide">
         {SERVICE_GUIDE.map(g => (
           <div class="card guide-card">

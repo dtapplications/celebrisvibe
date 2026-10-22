@@ -5,17 +5,17 @@ import HeroBackdrop from '../components/HeroBackdrop.astro';
 import Estimator from '../components/Estimator.astro';
 import Icon from '../components/Icon.astro';
 import CtaBand from '../components/CtaBand.astro';
-import { ALWAYS_INCLUDED, PACKAGES, PRICE_COMPARE, PRICE_FACTORS, ROUTES } from '../data/site';
+import { BASE_PRICES, OFFER_INCLUDES, PACKAGES, PACKAGES_NOTE, PRICE_COMPARE, PRICE_FACTORS, ROUTES } from '../data/site';
 import { abs, href } from '../lib/urls';
 
 const schema = [{
   '@type': 'OfferCatalog',
-  name: 'Изходни пакети',
+  name: 'Базови пакети',
   url: abs(Astro.site, ROUTES.prices),
   itemListElement: PACKAGES.map(p => ({
     '@type': 'Offer',
     name: p.name,
-    description: `${p.tagline}: ${p.items.join(', ')}`,
+    description: [p.tagline, p.items.join(', ')].filter(Boolean).join(': '),
     priceSpecification: { '@type': 'PriceSpecification', minPrice: p.from, priceCurrency: 'EUR' },
     seller: { '@id': abs(Astro.site, '#organization') },
   })),
@@ -23,7 +23,7 @@ const schema = [{
 ---
 <Base
   title="Цени на DJ, озвучаване и осветление"
-  description="Ориентировъчни цени за DJ, водещ, озвучаване и осветление: изходни пакети от €200, калкулатор и от какво зависи цената. Точна оферта до един работен ден."
+  description="Базови цени за DJ, озвучаване и осветление: минимум 2 часа — €200, DJ + озвучаване до 5 часа — €500. Калкулатор и персонална оферта до един работен ден."
   og="prices"
   schema={schema}
 >
@@ -32,9 +32,9 @@ const schema = [{
     <div class="split">
       <div>
         <Eyebrow>Цени</Eyebrow>
-        <h1 class="h1" style="margin-top:24px">Една оферта.<br />Цялото събитие.</h1>
+        <h1 class="h1" style="margin-top:24px">Ясна оферта.<br />Без изненади.</h1>
         <p class="lead" style="max-width:620px">
-          Всяко събитие е различно, затова не работим с фиксиран ценоразпис. Изпрати ни едно запитване и до един работен ден ще получиш точна оферта.
+          Минималният ангажимент е 2 часа — €200. За стандартно събитие до 5 часа: DJ без озвучаване — €300; DJ + професионално озвучаване — €500. За по-дълги събития и допълнителни услуги изготвяме персонална оферта до един работен ден.
         </p>
         <div class="btn-row">
           <a href={href(ROUTES.contact)} data-draft='{"mode":"inquiry"}' class="btn btn-primary">Получи оферта</a>
@@ -46,6 +46,16 @@ const schema = [{
   </section>
 
   <section class="section">
+    <div class="card base">
+      <h2 class="display base-title">{BASE_PRICES.title}</h2>
+      <dl class="base-list">
+        {BASE_PRICES.items.map(([label, price]) => (
+          <div class="base-row"><dt>{label}</dt><dd class="display">{price}</dd></div>
+        ))}
+      </dl>
+      <p class="base-note">{BASE_PRICES.note}</p>
+    </div>
+
     <h2 class="h2-sm" style="margin-top:clamp(64px,8vw,112px)">От какво зависи цената</h2>
     <div class="factors">
       {PRICE_FACTORS.map((f, i) => (
@@ -59,26 +69,31 @@ const schema = [{
 
     <div class="included">
       <div>
-        <h2 class="display included-title">Винаги включено в офертата</h2>
-        <p class="included-desc">Основата на всяко събитие е в цената - без доплащане за техниката, която прави вечерта възможна.</p>
+        <h2 class="display included-title">Какво включва твоята оферта</h2>
+        <p class="included-desc">Всяка услуга и разход се описват предварително — от музиката и техниката до транспорта и допълнителните услуги.</p>
+        <p class="included-desc">Няма автоматично добавени услуги — всичко включено се уточнява предварително в персоналната оферта.</p>
       </div>
+      <div>
+      <p class="included-lead">Според избрания пакет офертата може да включва:</p>
       <ul>
-        {ALWAYS_INCLUDED.map(x => (
+        {OFFER_INCLUDES.map(x => (
           <li><span class="tick"><Icon name="check" size={15} /></span>{x}</li>
         ))}
       </ul>
+      </div>
     </div>
 
-    <h2 class="h2-sm" style="margin-top:clamp(64px,8vw,112px)">Изходни пакети</h2>
-    <p class="sub" style="margin:12px 0 36px">Ориентир, от който започваме. Крайната цена уточняваме спрямо факторите по-горе.</p>
+    <h2 class="h2-sm" style="margin-top:clamp(64px,8vw,112px)">Базови пакети</h2>
+    <p class="sub" style="margin:12px 0 36px">Ориентировъчни решения, от които можеш да започнеш. Крайната конфигурация и цена се определят според конкретното събитие.</p>
     <div class="packages">
       {PACKAGES.map(p => (
         <div class:list={['package', p.highlight && 'is-highlight']}>
           <div class="pkg-body">
-            <div class="pkg-tagline">{p.tagline}</div>
             <h3 class="display pkg-name">{p.name}</h3>
-            <div class="display pkg-price">{p.price}</div>
+            {p.prices.map(price => <div class="display pkg-price">{price}</div>)}
+            {p.tagline && <div class="pkg-tagline">{p.tagline}</div>}
             <ul class="pkg-items">{p.items.map(item => <li>{item}</li>)}</ul>
+            {p.note && <p class="pkg-note">{p.note}</p>}
           </div>
           <div class="pkg-foot">
             <a href={href(ROUTES.contact)} data-draft='{"mode":"inquiry"}' class:list={['btn', 'btn-sm', 'pkg-btn', p.highlight ? 'btn-paper' : 'btn-outline']}>Поискай оферта</a>
@@ -86,16 +101,17 @@ const schema = [{
         </div>
       ))}
     </div>
+    <p class="sub packages-note">{PACKAGES_NOTE}</p>
 
     <div class="explain">
       <div>
-        <h2 class="h3">Как се формира цената</h2>
-        <p class="sub" style="margin-top:24px;line-height:1.65">След като ни изпратиш дата, локация и вид събитие, уточняваме програмата и техниката, която е нужна.</p>
-        <p class="sub" style="line-height:1.65">Офертата покрива цялото събитие - музика, техника, екип и транспорт - така че знаеш точната сума предварително.</p>
-        <blockquote class="display">Офертата е за цялото събитие, а не на час - без изненади в края на вечерта.</blockquote>
+        <h2 class="h3">Как се формира крайната цена</h2>
+        <p class="sub" style="margin-top:24px;line-height:1.65">След като ни изпратиш дата, локация, брой гости и вид събитие, уточняваме програмата и необходимото техническо оборудване.</p>
+        <p class="sub" style="line-height:1.65">Получаваш една персонална оферта, в която ясно са описани услугите, техниката, екипът и всички предварително известни допълнителни разходи.</p>
+        <p class="sub" style="line-height:1.65">Цената се определя за договорената продължителност на събитието. Ако програмата продължи след предварително уговорения час, условията и цената за всеки допълнителен час се уточняват предварително — без изненади в края на вечерта.</p>
       </div>
       <div>
-        <h2 class="h3">Какво да сравниш</h2>
+        <h2 class="h3">Как да сравниш различните оферти?</h2>
         <ol class="card compare">
           {PRICE_COMPARE.map(([q, a], i) => (
             <li>
@@ -113,15 +129,22 @@ const schema = [{
     <CtaBand actions={[
       { label: 'Виж услугите', path: ROUTES.services },
       { label: 'Получи оферта', path: ROUTES.contact, draft: { mode: 'inquiry' }, primary: true },
-    ]}>Точна оферта до<br />един работен ден.</CtaBand>
+    ]}>Получи точна оферта<br />до един работен ден.</CtaBand>
   </section>
 </Base>
 
 <style>
+  .base { padding: clamp(24px, 3vw, 40px); display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 16px clamp(32px, 4vw, 64px); align-items: center; }
+  .base-title { margin: 0; font-size: clamp(26px, 2.8vw, 38px); line-height: 1.1; }
+  .base-list { margin: 0; display: flex; flex-direction: column; }
+  .base-row { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+  .base-row dt { font-size: 17px; color: var(--body); }
+  .base-row dd { margin: 0; font-weight: 700; font-size: 24px; white-space: nowrap; }
+  .base-note { grid-column: 1 / -1; margin: 0; font-size: 15px; font-weight: 300; color: var(--muted); }
   .factors { margin-top: 36px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 16px; }
-  .factor { display: flex; flex-direction: column; gap: 12px; padding: 28px; }
+  .factor { display: flex; flex-direction: column; gap: 12px; padding: 24px; }
   .factor-num { font-size: 40px; line-height: 1; }
-  .factor-title { margin: 0; font-size: 24px; letter-spacing: -0.02em; line-height: 1.1; }
+  .factor-title { margin: 0; font-size: 20px; letter-spacing: -0.02em; line-height: 1.15; }
   .factor-desc { margin: 0; font-size: 16px; font-weight: 300; line-height: 1.5; color: var(--body); }
 
   .included {
@@ -130,6 +153,7 @@ const schema = [{
   }
   .included-title { margin: 0; font-size: clamp(26px, 2.8vw, 38px); line-height: 1.1; }
   .included-desc { margin: 12px 0 0; font-size: 16px; font-weight: 300; line-height: 1.55; color: var(--band-text); max-width: 420px; }
+  .included-lead { margin: 0 0 16px; font-size: 15px; color: var(--band-text); }
   .included ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px 24px; }
   .included li { display: flex; align-items: center; gap: 12px; font-size: 16px; }
   .tick { flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--band-gold); color: var(--band-gold); display: flex; align-items: center; justify-content: center; }
@@ -141,7 +165,12 @@ const schema = [{
   .pkg-tagline { font-size: 13px; color: var(--gold); margin-bottom: 8px; }
   .is-highlight .pkg-tagline { color: var(--band-gold); }
   .pkg-name { margin: 0; font-size: 36px; letter-spacing: -0.03em; line-height: 1; }
-  .pkg-price { font-weight: 700; font-size: 28px; margin-top: 20px; }
+  .pkg-price { font-weight: 700; font-size: 24px; margin-top: 12px; }
+  .pkg-name + .pkg-price { margin-top: 20px; }
+  .pkg-tagline { margin-top: 10px; }
+  .pkg-note { margin: 20px 0 0; font-size: 13px; color: var(--muted); }
+  .is-highlight .pkg-note { color: var(--band-text); }
+  .packages-note { margin-top: 20px; font-size: 15px; color: var(--muted); max-width: 760px; }
   .pkg-items { list-style: none; padding: 0; margin: 24px 0 0; display: flex; flex-direction: column; gap: 10px; }
   .pkg-items li { display: flex; align-items: center; gap: 10px; font-size: 15px; color: var(--body); }
   .is-highlight .pkg-items li { color: var(--band-text); }
@@ -151,10 +180,6 @@ const schema = [{
   .pkg-btn { width: 100%; }
 
   .explain { margin-top: clamp(64px, 8vw, 112px); display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: clamp(32px, 4vw, 64px); align-items: start; }
-  blockquote {
-    margin: 36px 0 0; padding: 4px 0 4px 28px; border-left: 3px solid var(--gold); max-width: 560px;
-    letter-spacing: -0.02em; font-size: clamp(22px, 2.2vw, 30px); line-height: 1.25;
-  }
   .compare { list-style: none; margin: 24px 0 0; padding: 4px 28px; }
   .compare li { display: grid; grid-template-columns: 40px 1fr; gap: 12px; padding: 22px 0; }
   .compare li + li { border-top: 1px solid var(--line); }

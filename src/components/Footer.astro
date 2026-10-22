@@ -16,7 +16,8 @@ const current = Astro.url.pathname;
   </div>
   <div class="bottom">
     <div class="legal">
-      <span>© {new Date().getFullYear()} {SITE_NAME} · {SLOGAN}</span>
+      <span class="slogan">{SLOGAN}</span>
+      <span>© {new Date().getFullYear()} {SITE_NAME}</span>
       <a href={href(ROUTES.privacy)} class="underline">Политика за поверителност</a>
     </div>
     <div class="social">
@@ -48,6 +49,7 @@ const current = Astro.url.pathname;
   }
   .bottom { display: flex; justify-content: space-between; gap: 24px; flex-wrap: wrap; margin-top: 40px; font-size: 14px; color: var(--muted); }
   .legal { display: flex; gap: 6px 20px; flex-wrap: wrap; align-items: center; }
+  .slogan { flex-basis: 100%; }
   .underline { text-decoration: underline; text-underline-offset: 3px; }
   .social { display: flex; gap: 10px; }
   .social a {
