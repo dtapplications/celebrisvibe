@@ -128,7 +128,7 @@ export const PACKAGES: Package[] = [
     highlight: true,
   },
   {
-    name: 'Complete пакет',
+    name: 'Цялостен пакет',
     prices: ['От €900'], from: 900,
     items: ['DJ', 'Водещ', 'Озвучаване', 'Осветление', 'Подготовка и координация'],
     highlight: false,
@@ -149,15 +149,15 @@ export const CALL_TIMES = ['Сутринта', 'Следобед', 'Вечерт
 
 // ─── Price estimator ──────────────────────────────────────────────────────────
 
-// MOCK pricing for the estimator - replace with the client's real rules before launch.
-// Calibrated to the packages for a 4-hour private event, 50-150 guests:
-// DJ + sound €500 · + host + lights €900 ("Complete пакет"). Sound is always included.
+// Matches the published base prices (BASE_PRICES, PACKAGES):
+// DJ 2 h €200 · DJ up to 5 h €300 · + sound €500 · + host + lights €900 ("Цялостен пакет").
+// Longer than 5 hours is a personal offer, so the calculator shows the 5-hour price.
 export const ESTIMATE = {
-  base: 200,                 // DJ, up to the included hours
-  includedHours: 4,
-  extraHour: 50,
-  sound: { 'До 50': 150, '50 – 150': 300, '150 – 300': 450, '300+': 600 } as Record<string, number>,
-  type: { private: 0, wedding: 100, corporate: 50 } as Record<string, number>,
+  minHours: 2,
+  maxHours: 5,
+  djMinimum: 200,            // DJ, up to the 2-hour minimum
+  djUpToMax: 300,            // DJ, 3 to 5 hours
+  sound: 200,
   host: 200,
   lights: 200,
 };
@@ -169,15 +169,15 @@ export const ESTIMATE_TYPES: [string, string, string][] = [
   ['wedding', 'Сватба', 'Сватба'],
 ];
 
-export type EstimateInput = { type: string; hours: number; guests: string; host: boolean; lights: boolean };
+export type EstimateInput = { type: string; hours: number; guests: string; sound: boolean; host: boolean; lights: boolean };
 
-export const ESTIMATE_DEFAULTS: EstimateInput = { type: 'wedding', hours: 5, guests: '50 – 150', host: true, lights: true };
+export const ESTIMATE_DEFAULTS: EstimateInput = { type: 'private', hours: 5, guests: '50 – 150', sound: true, host: false, lights: false };
 
+/** Price from the base prices. Type and guests don't change it; they pre-fill the contact form. */
 export function estimatePrice(i: EstimateInput): number {
-  return ESTIMATE.base
-    + Math.max(0, i.hours - ESTIMATE.includedHours) * ESTIMATE.extraHour
-    + ESTIMATE.sound[i.guests]
-    + ESTIMATE.type[i.type]
+  const hours = Math.min(i.hours, ESTIMATE.maxHours);
+  return (hours <= ESTIMATE.minHours ? ESTIMATE.djMinimum : ESTIMATE.djUpToMax)
+    + (i.sound ? ESTIMATE.sound : 0)
     + (i.host ? ESTIMATE.host : 0)
     + (i.lights ? ESTIMATE.lights : 0);
 }

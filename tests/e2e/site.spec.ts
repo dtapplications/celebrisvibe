@@ -136,21 +136,45 @@ test.describe('interactive sections', () => {
     await expect(panel.locator('.detail:not([hidden]) h3')).toHaveText('Фонова музика');
   });
 
-  test('price estimator updates and pre-fills the contact form', async ({ page }) => {
+  test('price estimator matches the published base prices', async ({ page }) => {
     await page.goto('/ceni/');
-    const total = page.locator('[data-total]');
-    await expect(total).toHaveText('1050');
-    await page.locator('#est-hours').fill('7');
-    await page.locator('label.choice', { hasText: 'Фирмено' }).click();
-    await page.locator('label.choice', { hasText: '150 – 300' }).click();
-    await expect(total).toHaveText('1250');
+    const est = page.locator('[data-estimator]');
+    const total = est.locator('[data-total]');
+    const toggle = (label: string) => est.locator('label.choice', { hasText: label }).click();
+
+    await expect(total).toHaveText('500');            // default: DJ + озвучаване, 5 часа
+    await toggle('Озвучаване');
+    await expect(total).toHaveText('300');            // DJ до 5 часа, без озвучаване
+    await est.locator('#est-hours').fill('2');
+    await expect(total).toHaveText('200');            // минимален ангажимент 2 часа
+    await toggle('Озвучаване');
+    await expect(total).toHaveText('400');
+    await est.locator('#est-hours').fill('5');
+    await toggle('Водещ');
+    await toggle('Осветление');
+    await expect(total).toHaveText('900');            // цялостен пакет
+    await expect(est.locator('[data-long-note]')).toBeHidden();
+    await est.locator('#est-hours').fill('6');        // "над 5 часа"
+    await expect(total).toHaveText('900');
+    await expect(est.locator('output')).toHaveText('5+');
+    await expect(est.locator('[data-long-note]')).toBeVisible();
+  });
+
+  test('price estimator pre-fills the contact form', async ({ page }) => {
+    await page.goto('/ceni/');
+    const est = page.locator('[data-estimator]');
+    await est.locator('#est-hours').fill('6');
+    await est.locator('label.choice', { hasText: 'Фирмено' }).click();
+    await est.locator('label.choice', { hasText: '150 – 300' }).click();
+    await est.locator('label.choice', { hasText: 'Водещ' }).click();
+    await expect(est.locator('[data-total]')).toHaveText('700');
 
     await page.getByRole('link', { name: 'Получи точна оферта' }).click();
     await expect(page).toHaveURL('/kontakti/');
     await expect(page.locator('input[name="type"]:checked')).toHaveValue('Корпоративно');
     await expect(page.locator('select[name="guests"]')).toHaveValue('150 – 300');
-    await expect.poll(() => checkedServices(page)).toEqual(['DJ', 'Водещ', 'Озвучаване', 'Осветление']);
-    await expect(page.locator('textarea[name="note"]')).toHaveValue('Ориентировъчна оценка от сайта: от €1250, 7 часа');
+    await expect.poll(() => checkedServices(page)).toEqual(['DJ', 'Водещ', 'Озвучаване']);
+    await expect(page.locator('textarea[name="note"]')).toHaveValue('Ориентировъчна оценка от сайта: от €700, над 5 часа');
   });
 
   test('"add extra" appends to the enquiry and is marked as added', async ({ page }) => {

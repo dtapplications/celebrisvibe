@@ -1,6 +1,6 @@
 ---
 import Icon from './Icon.astro';
-import { ESTIMATE_DEFAULTS as D, ESTIMATE_TYPES, GUEST_OPTIONS, ROUTES, estimatePrice } from '../data/site';
+import { ESTIMATE, ESTIMATE_DEFAULTS as D, ESTIMATE_TYPES, GUEST_OPTIONS, ROUTES, estimatePrice } from '../data/site';
 import { href } from '../lib/urls';
 ---
 <div class="wrap">
@@ -22,7 +22,9 @@ import { href } from '../lib/urls';
           <span>Продължителност</span>
           <span class="hours-value"><output name="hoursOut" for="est-hours">{D.hours}</output> часа</span>
         </label>
-        <input id="est-hours" type="range" name="hours" min="2" max="10" step="1" value={D.hours} />
+        {/* The last step stands for "more than 5 hours" */}
+        <input id="est-hours" type="range" name="hours" min={ESTIMATE.minHours} max={ESTIMATE.maxHours + 1} step="1" value={D.hours} />
+        <p class="hours-note" data-long-note hidden>Над {ESTIMATE.maxHours} часа — допълнителното време се уточнява в персоналната оферта.</p>
       </div>
 
       <fieldset>
@@ -37,6 +39,7 @@ import { href } from '../lib/urls';
       <fieldset>
         <legend class="field-label">Допълнителни услуги</legend>
         <div class="choices">
+          <label class="choice choice-box"><input type="checkbox" name="sound" checked={D.sound} /><span>Озвучаване</span></label>
           <label class="choice choice-box"><input type="checkbox" name="host" checked={D.host} /><span>Водещ</span></label>
           <label class="choice choice-box"><input type="checkbox" name="lights" checked={D.lights} /><span>Осветление</span></label>
         </div>
@@ -69,6 +72,7 @@ import { href } from '../lib/urls';
   .hours-label { display: flex; justify-content: space-between; }
   .hours-value { color: var(--ink); font-weight: 600; }
   input[type='range'] { width: 100%; accent-color: var(--gold); cursor: pointer; }
+  .hours-note { margin: 8px 0 0; font-size: 13px; color: var(--muted); }
   .choice span { padding: 9px 14px; border-color: var(--edge); }
 
   .total {
@@ -82,7 +86,7 @@ import { href } from '../lib/urls';
 </style>
 
 <script>
-  import { ESTIMATE_TYPES, estimatePrice } from '../data/site';
+  import { ESTIMATE, ESTIMATE_TYPES, estimatePrice } from '../data/site';
   import { ESTIMATE_PREFIX } from '../lib/draft';
 
   const form = document.querySelector<HTMLFormElement>('[data-estimator]');
@@ -90,6 +94,7 @@ import { href } from '../lib/urls';
     const total = form.querySelector<HTMLElement>('[data-total]')!;
     const hoursOut = form.querySelector<HTMLOutputElement>('output')!;
     const link = form.querySelector<HTMLAnchorElement>('[data-estimate-link]')!;
+    const longNote = form.querySelector<HTMLElement>('[data-long-note]')!;
 
     const update = () => {
       const f = new FormData(form);
@@ -97,19 +102,23 @@ import { href } from '../lib/urls';
         type: String(f.get('type')),
         hours: Number(f.get('hours')),
         guests: String(f.get('guests')),
+        sound: f.has('sound'),
         host: f.has('host'),
         lights: f.has('lights'),
       };
       const price = estimatePrice(input);
+      const long = input.hours > ESTIMATE.maxHours;
+      const hoursText = long ? `над ${ESTIMATE.maxHours}` : String(input.hours);
       total.textContent = String(price);
-      hoursOut.value = String(input.hours);
+      hoursOut.value = long ? `${ESTIMATE.maxHours}+` : String(input.hours);
+      longNote.hidden = !long;
       // Carry the selection into the contact form
       link.dataset.draft = JSON.stringify({
         mode: 'inquiry',
         type: ESTIMATE_TYPES.find(([k]) => k === input.type)![2],
         guests: input.guests,
-        services: ['DJ', 'Озвучаване', ...(input.host ? ['Водещ'] : []), ...(input.lights ? ['Осветление'] : [])],
-        estimate: `${ESTIMATE_PREFIX}: от €${price}, ${input.hours} часа`,
+        services: ['DJ', ...(input.sound ? ['Озвучаване'] : []), ...(input.host ? ['Водещ'] : []), ...(input.lights ? ['Осветление'] : [])],
+        estimate: `${ESTIMATE_PREFIX}: от €${price}, ${hoursText} часа`,
       });
     };
     form.addEventListener('input', update);
