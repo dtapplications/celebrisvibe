@@ -19,9 +19,9 @@ export const NAV: [string, string][] = [
   [ROUTES.contact, 'Контакти'],
 ];
 
-export const CONTACT_EMAIL = 'hello@celebrisvibe.com';
+export const CONTACT_EMAIL = 'info@celebrisvibe.com';
 
-export const CONTACT_PHONE = '+359 (0) 000 000';
+export const CONTACT_PHONE = '+359 88 743 9114';
 
 // TODO: replace with the client's real profile URLs
 export const SOCIAL = { instagram: '#', facebook: '#' };
