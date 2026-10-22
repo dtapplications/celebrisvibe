@@ -6,10 +6,10 @@ import { SERVICES } from './services';
 export type OgPage = { eyebrow: string; title: string; photo: string };
 
 export const OG_PAGES: Record<string, OgPage> = {
-  home: { eyebrow: 'DJ · Водещ · Озвучаване · Осветление', title: 'Създаваме вайб. Честваме живота.', photo: 'hero' },
-  services: { eyebrow: 'Услуги', title: 'DJ, звук и светлина за всеки повод', photo: 'dj-crowd' },
-  prices: { eyebrow: 'Цени', title: 'Една оферта. Цялото събитие.', photo: 'light-finale' },
-  contact: { eyebrow: 'Контакти', title: 'Запази дата. Провери свободна дата онлайн.', photo: 'dj-mic' },
+  home: { eyebrow: 'DJ · Водещ · Озвучаване · Осветление', title: 'Създаваме настроение. Празнуваме живота.', photo: 'hero' },
+  services: { eyebrow: 'Услуги', title: 'Всичко необходимо за правилната атмосфера.', photo: 'dj-crowd' },
+  prices: { eyebrow: 'Цени', title: 'Ясна оферта. Без изненади.', photo: 'light-finale' },
+  contact: { eyebrow: 'Контакти', title: 'Провери свободна дата.', photo: 'dj-mic' },
   privacy: { eyebrow: 'Поверителност', title: 'Политика за поверителност', photo: 'sound-background' },
   qr: { eyebrow: 'Контакти', title: 'Планирай събитието си с нас', photo: 'extra-effects' },
   ...Object.fromEntries(SERVICES.map(s => [s.slug, { eyebrow: s.title, title: s.seoTitle, photo: s.photo }])),

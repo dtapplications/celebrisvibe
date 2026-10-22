@@ -19,13 +19,13 @@ export const TEST_ENV = {
 
 /** Every page of the site, with its expected <h1> and link-preview image */
 export const PAGES = [
-  { path: '/', h1: 'Създаваме вайб.', og: 'home' },
-  { path: '/uslugi/', h1: 'DJ, звук и светлина', og: 'services' },
-  { path: '/uslugi/dj-i-vodesht/', h1: 'DJ & Водещ', og: 'dj-i-vodesht' },
+  { path: '/', h1: 'Създаваме настроение.', og: 'home' },
+  { path: '/uslugi/', h1: 'Всичко необходимо за правилната атмосфера.', og: 'services' },
+  { path: '/uslugi/dj-i-vodesht/', h1: 'DJ и водещ', og: 'dj-i-vodesht' },
   { path: '/uslugi/ozvuchavane/', h1: 'Озвучаване', og: 'ozvuchavane' },
   { path: '/uslugi/osvetlenie/', h1: 'Осветление', og: 'osvetlenie' },
-  { path: '/ceni/', h1: 'Една оферта.', og: 'prices' },
-  { path: '/kontakti/', h1: 'Запази дата.', og: 'contact' },
+  { path: '/ceni/', h1: 'Ясна оферта.', og: 'prices' },
+  { path: '/kontakti/', h1: 'Провери свободна дата.', og: 'contact' },
   { path: '/poveritelnost/', h1: 'Политика за поверителност', og: 'privacy' },
 ];
 

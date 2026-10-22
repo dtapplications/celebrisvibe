@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
 import {
   CONTACT_EMAIL, CONTACT_PHONE, EVENT_TYPES, ROUTES, SERVICE_GUIDE,
-  EXTRAS, PACKAGES, PRICE_FACTORS, PRICE_COMPARE, ALWAYS_INCLUDED,
+  EXTRAS, PACKAGES, PACKAGES_NOTE, BASE_PRICES, PRICE_FACTORS, PRICE_COMPARE, OFFER_INCLUDES,
 } from '../data/site';
 import { SERVICES, serviceUrl } from '../data/services';
 import { abs, textResponse } from '../lib/urls';
@@ -56,15 +56,24 @@ ${list(EXTRAS.map(e => `${e.title}: ${e.desc}`))}
 
 Страница: ${abs(site, ROUTES.prices)}
 
-Няма фиксиран ценоразпис. Офертата е за цялото събитие, а не на час, и включва музика, техника, екип и транспорт.
+### ${BASE_PRICES.title}
 
-### Изходни пакети (ориентировъчно)
+${list(BASE_PRICES.items.map(([label, price]) => `${label} — ${price}`))}
 
-${PACKAGES.map(p => `- ${p.name}, ${p.price.toLowerCase()} (${p.tagline.toLowerCase()}): ${p.items.join(', ')}`).join('\n')}
+${BASE_PRICES.note}
 
-### Винаги включено в офертата
+### Базови пакети (ориентировъчно)
 
-${list(ALWAYS_INCLUDED)}
+${PACKAGES.map(p => `- ${p.name} (${[...p.prices, p.tagline].filter(Boolean).join(', ')}): ${p.items.join(', ')}${p.note ? `. ${p.note}` : ''}`).join('\n')}
+
+${PACKAGES_NOTE}
+
+### Какво включва офертата
+
+Всяка услуга и разход се описват предварително. Според избрания пакет офертата може да включва:
+${list(OFFER_INCLUDES)}
+
+Няма автоматично добавени услуги — всичко включено се уточнява предварително в персоналната оферта.
 
 ### От какво зависи цената
 
