@@ -1,7 +1,9 @@
 name: Test
 
-# Runs on pull requests only, so deploys stay fast. To test the live site after a
-# deploy, run locally: LIVE_URL=https://celebrisvibe.com npm test
+# Runs on pull requests only, so deploys stay fast. Two checks, both required to merge:
+#   build - type check + production build (fast, clear failure if the site doesn't build)
+#   test  - full Playwright suite (functional tests on build and dev, dev-vs-build parity)
+# To test the live site after a deploy, run locally: LIVE_URL=https://celebrisvibe.com npm test
 
 on:
   pull_request:
@@ -15,6 +17,27 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run check
+      # Same build as the deploy, without the real service keys
+      - run: npm run build
+      - name: Every page was generated
+        run: |
+          for page in index uslugi/index ceni/index kontakti/index poveritelnost/index qr/index 404; do
+            f="dist/${page}.html"
+            [ -s "$f" ] || { echo "::error::Missing or empty $f"; exit 1; }
+          done
+          ls dist/uslugi/*/index.html dist/og/*.jpg dist/sitemap.xml dist/llms.txt > /dev/null
+          echo "Build output OK: $(find dist -name '*.html' | wc -l) HTML pages"
+
   test:
     runs-on: ubuntu-latest
     steps:
@@ -25,7 +48,6 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npx playwright install --with-deps chromium
-      - run: npm run check
       # Builds with fake service keys, starts the dev server and compares the two
       - run: npm test
       - uses: actions/upload-artifact@v4
