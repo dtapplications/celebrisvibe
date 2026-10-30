@@ -75,7 +75,7 @@ PR description: what changed and why, which pages, screenshots for visual change
 
 ## CI and deployment
 
-- `.github/workflows/test.yml` — on every pull request: `npm ci`, install Chromium, `npm run check`, `npm test`. On failure the Playwright report is uploaded as an artifact.
+- `.github/workflows/test.yml` — on every pull request, two checks that must both pass to merge: **`build`** (`npm run check`, `npm run build`, verifies every page and the generated files exist) and **`test`** (installs Chromium, `npm test`). On failure the Playwright report is uploaded as an artifact.
 - `.github/workflows/deploy.yml` — on every push to `main` (and manual run): build with the real secrets and publish to GitHub Pages. No tests run here, to keep deploys fast — so merge only PRs whose Test run is green.
 - Every page carries `<meta name="build" content="<commit sha>">`, which shows which commit is live.
 - Rolling back = revert the commit on `main` and push; the deploy runs again.

@@ -13,7 +13,7 @@ You are helping someone change the Celebris Vibe website. Most contributors work
 - **Repo:** https://github.com/dtapplications/celebrisvibe, default branch `main`.
 - **Stack:** Astro 7 (static output), plain TypeScript in `<script>` tags for interactivity (no React or other UI framework), CSS with custom properties, `astro:assets` for images, Playwright for tests. Node 24.
 - **Content lives in data files, not in page markup:** `src/data/site.ts` (prices, packages, event types, extras, form options, calculator rules, routes, contact details) and `src/data/services.ts` (the three services). Most text changes are edits to these two files.
-- **Deploy:** every push to `main` builds and publishes to GitHub Pages (`.github/workflows/deploy.yml`). Cloudflare sits in front for DNS, HTTPS and `www` redirect. Tests run on pull requests (`.github/workflows/test.yml`), not on deploy.
+- **Deploy:** every push to `main` builds and publishes to GitHub Pages (`.github/workflows/deploy.yml`). Cloudflare sits in front for DNS, HTTPS and `www` redirect. Pull requests run two required checks (`.github/workflows/test.yml`): `build` (type check + build) and `test` (full test suite); deploys don't run them.
 
 ## How to work with the contributor
 

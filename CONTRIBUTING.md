@@ -25,7 +25,7 @@ Thanks for helping with the site. This guide covers how to make a change, the ru
    git push -u origin <branch>
    ```
 5. **Open a pull request to `main`** and fill in the template. Without write access, fork the repo and open the PR from your fork.
-6. **Wait for the `test` check to go green.** `main` is protected: a PR can't be merged while the type check, build or tests fail. Every merge deploys to the live site within about a minute.
+6. **Wait for the `build` and `test` checks to go green.** `main` is protected: a PR can't be merged while the type check, the build or the tests fail. `build` finishes in about a minute, so a broken build shows up first. Every merge deploys to the live site within about a minute.
 
 ## Where to make common changes
 

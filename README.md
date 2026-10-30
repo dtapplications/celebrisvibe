@@ -58,7 +58,7 @@ Also generated at build: `sitemap.xml`, `robots.txt`, `llms.txt`, `llms-full.txt
 ```
 ├── .github/
 │   ├── workflows/deploy.yml     push to main → build → GitHub Pages
-│   ├── workflows/test.yml       pull requests → type check + tests (required to merge)
+│   ├── workflows/test.yml       pull requests → `build` and `test` checks (required to merge)
 │   └── pull_request_template.md
 ├── public/                      files served as-is (logos, favicons, CNAME)
 ├── src/
@@ -101,7 +101,9 @@ Both are baked in at build time: after changing a secret, re-run the **Deploy to
 ## Deployment
 
 - Every push to `main` builds and deploys to GitHub Pages (`deploy.yml`, about a minute).
-- Pull requests run the type check and the full test suite (`test.yml`); merging requires it to pass.
+- Pull requests run two checks (`test.yml`), both required to merge:
+  - **`build`** — type check + production build + every page generated (about a minute)
+  - **`test`** — the full browser test suite (about four minutes)
 - Each page has `<meta name="build" content="<commit>">` showing which commit is live.
 - Domain and HTTPS: Cloudflare (DNS proxied, SSL mode **Full**, Always Use HTTPS, `www` → apex redirect).
 - To test the live site after a deploy: `LIVE_URL=https://celebrisvibe.com npm test`.
