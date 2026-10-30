@@ -21,3 +21,6 @@ Thumbs.db
 # Playwright
 test-results/
 playwright-report/
+
+# Packaged AI skills (npm run skill:zip)
+dist-skills/
