@@ -33,6 +33,7 @@ celebrisvibe/
 ├── skills/celebrisvibe-contributor/   this skill (SKILL.md + references/)
 ├── scripts/package-skill.mjs  npm run skill:zip → dist-skills/<skill>.zip
 ├── README.md, CONTRIBUTING.md, .github/pull_request_template.md
+├── AGENTS.md, CLAUDE.md       rules for AI agents (PR only, never push/merge to main)
 └── .github/workflows/        deploy.yml (push to main), test.yml (pull requests)
 ```
 

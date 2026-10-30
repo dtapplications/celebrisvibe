@@ -74,6 +74,7 @@ Also generated at build: `sitemap.xml`, `robots.txt`, `llms.txt`, `llms-full.txt
 │   └── styles/global.css        theme colours, base styles, shared classes
 ├── tests/e2e/                   Playwright tests (env.ts lists every page)
 ├── skills/celebrisvibe-contributor/   AI assistant skill describing this codebase (see CONTRIBUTING)
+├── AGENTS.md, CLAUDE.md         rules for AI agents (always via pull request, never push to main)
 ├── scripts/package-skill.mjs    builds the skill zip: npm run skill:zip
 ├── astro.config.mjs
 └── playwright.config.ts

@@ -86,6 +86,8 @@ The [PR template](.github/pull_request_template.md) asks for:
 
 ## Using an AI assistant
 
+**AI agents never commit, push or merge to `main`.** They work on a branch, open a pull request and stop; a person merges after `build` and `test` pass. The rules for agents are in [AGENTS.md](AGENTS.md) (read automatically by Codex, Cursor, Copilot and others; Claude Code reads it via `CLAUDE.md`).
+
 The repo includes an AI skill, [`skills/celebrisvibe-contributor`](skills/celebrisvibe-contributor/SKILL.md), that describes this codebase in detail (architecture, content map, recipes, gotchas). To use it with ChatGPT or Claude:
 
 1. Run `npm run skill:zip` → `dist-skills/celebrisvibe-contributor.zip`.

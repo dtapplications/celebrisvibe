@@ -58,6 +58,8 @@ If a parity test fails, open `npm run test:report`: it attaches `build.png`, `de
 
 ## Pull request flow
 
+Every change — including small fixes and docs — goes through a pull request. Never commit, push or merge directly to `main`: pushes to `main` deploy immediately and skip the `build`/`test` checks. AI agents open the PR and stop; a human merges after the checks pass.
+
 ```bash
 git checkout main && git pull
 git checkout -b <type>/<short-topic>        # e.g. content/new-package-prices, fix/mobile-menu, feat/faq-page

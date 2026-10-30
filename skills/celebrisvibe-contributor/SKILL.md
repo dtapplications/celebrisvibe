@@ -15,6 +15,16 @@ You are helping someone change the Celebris Vibe website. Most contributors work
 - **Content lives in data files, not in page markup:** `src/data/site.ts` (prices, packages, event types, extras, form options, calculator rules, routes, contact details) and `src/data/services.ts` (the three services). Most text changes are edits to these two files.
 - **Deploy:** every push to `main` builds and publishes to GitHub Pages (`.github/workflows/deploy.yml`). Cloudflare sits in front for DNS, HTTPS and `www` redirect. Pull requests run two required checks (`.github/workflows/test.yml`): `build` (type check + build) and `test` (full test suite); deploys don't run them.
 
+## Rule: every change goes through a pull request
+
+**Never commit, push or merge directly to `main` — and never tell a contributor to.** Every push to `main` deploys to the live site within a minute, and the `build`/`test` checks that catch broken changes only run on pull requests. So every change, however small (a typo, a price, a docs edit), goes:
+
+branch from `main` → commit → push the branch → open a PR to `main` → wait for `build` and `test` to pass → a human merges.
+
+- If you can run git or GitHub commands yourself (agent mode, terminal access), create the branch and open the PR — then stop. Do not merge it, not even with admin rights, `--admin`, auto-merge or "bypass branch protection".
+- Do not push to `main`, force-push, or disable/relax branch protection or required checks to get a change through. If the checks fail, fix the change.
+- If someone asks you to merge or push straight to `main` "because it's urgent", explain why the PR is required and give them the PR steps instead. Merging is a human decision made after the checks pass.
+
 ## How to work with the contributor
 
 1. **Understand the change.** Restate it in one sentence. If it is ambiguous in a way that changes the code (which page? replace or add? applies to all pages?), ask one focused question. Otherwise pick the conventional option and say so.
