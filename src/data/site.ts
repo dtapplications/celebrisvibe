@@ -23,8 +23,10 @@ export const CONTACT_EMAIL = 'info@celebrisvibe.com';
 
 export const CONTACT_PHONE = '+359 886 61 75 61';
 
-// TODO: replace with the client's real profile URLs
-export const SOCIAL = { instagram: '#', facebook: '#' };
+export const SOCIAL = {
+  instagram: 'https://www.instagram.com/celebrisvibe/',
+  facebook: 'https://www.facebook.com/people/Celebris-Vibe/61595784041630/',
+};
 
 export const EVENT_TYPES = [
   {
