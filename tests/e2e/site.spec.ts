@@ -80,6 +80,24 @@ test.describe('pages', () => {
     expect(organization.knowsAbout).toEqual(expect.arrayContaining(['караоке', 'фотокабина и фотобудка', 'специални ефекти за събития']));
   });
 
+  test('footer links to the official social profiles', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.getByRole('link', { name: 'Instagram' })).toHaveAttribute(
+      'href',
+      'https://www.instagram.com/celebrisvibe/',
+    );
+    await expect(page.getByRole('link', { name: 'Facebook' })).toHaveAttribute(
+      'href',
+      'https://www.facebook.com/people/Celebris-Vibe/61595784041630/',
+    );
+
+    const organization = JSON.parse((await page.locator('script[type="application/ld+json"]').textContent())!)['@graph'][0];
+    expect(organization.sameAs).toEqual(expect.arrayContaining([
+      'https://www.instagram.com/celebrisvibe/',
+      'https://www.facebook.com/people/Celebris-Vibe/61595784041630/',
+    ]));
+  });
+
   test('every internal link points to an existing page', async ({ page, request }) => {
     const links = new Set<string>();
     for (const p of PAGES) {
