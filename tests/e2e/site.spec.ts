@@ -43,6 +43,43 @@ test.describe('pages', () => {
     });
   }
 
+  test('SEO metadata covers core services and add-ons', async ({ page }) => {
+    const expectTerms = (text: string, terms: readonly string[]) => {
+      const normalized = text.toLocaleLowerCase('bg-BG');
+      for (const term of terms) expect(normalized).toContain(term.toLocaleLowerCase('bg-BG'));
+    };
+
+    await page.goto('/');
+    const homeDescription = (await page.locator('meta[name="description"]').getAttribute('content'))!;
+    await expect(page).toHaveTitle(/сватби.*рождени дни/i);
+    await expect(page).not.toHaveTitle(/София/);
+    expectTerms(homeDescription, ['DJ', 'водещ', 'сватби', 'рождени дни', 'кръщенета', 'юбилеи', 'партита', 'фирмени събития', 'озвучаване', 'осветление', 'караоке', 'фотокабина', 'ефекти', 'София']);
+
+    await page.goto('/uslugi/');
+    const servicesDescription = (await page.locator('meta[name="description"]').getAttribute('content'))!;
+    await expect(page).not.toHaveTitle(/София/);
+    expectTerms(servicesDescription, ['DJ', 'водещ', 'сватби', 'рождени дни', 'кръщенета', 'юбилеи', 'партита', 'фирмени събития', 'озвучаване', 'осветление', 'караоке', 'фотокабина', 'ефекти', 'София']);
+
+    for (const [path, terms] of [
+      ['/uslugi/dj-i-vodesht/', ['DJ', 'водещ', 'кръщенета', 'караоке', 'София']],
+      ['/uslugi/ozvuchavane/', ['озвучаване', 'микрофони', 'сватби', 'фирмени събития', 'София']],
+      ['/uslugi/osvetlenie/', ['осветление', 'специални ефекти', 'рождени дни', 'София']],
+    ] as const) {
+      await page.goto(path);
+      await expect(page).not.toHaveTitle(/София/);
+      const description = (await page.locator('meta[name="description"]').getAttribute('content'))!;
+      expectTerms(description, terms);
+    }
+
+    await page.goto('/ceni/');
+    const pricesDescription = (await page.locator('meta[name="description"]').getAttribute('content'))!;
+    await expect(page).not.toHaveTitle(/София/);
+    expectTerms(pricesDescription, ['DJ', 'сватби', 'рождени дни', 'кръщенета', 'фирмени събития', 'озвучаване', 'осветление', 'караоке', 'фотокабина', 'ефекти', 'София']);
+
+    const organization = JSON.parse((await page.locator('script[type="application/ld+json"]').textContent())!)['@graph'][0];
+    expect(organization.knowsAbout).toEqual(expect.arrayContaining(['караоке', 'фотокабина и фотобудка', 'специални ефекти за събития']));
+  });
+
   test('every internal link points to an existing page', async ({ page, request }) => {
     const links = new Set<string>();
     for (const p of PAGES) {
