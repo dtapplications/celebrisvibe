@@ -24,10 +24,10 @@ const legacy = { services: ROUTES.services, prices: ROUTES.prices, contact: ROUT
 const legacyMap = Object.fromEntries(Object.entries(legacy).map(([k, v]) => [k, href(v)]));
 ---
 <Base
-  title="DJ и водещ за събития в София | Celebris Vibe"
+  title="DJ за сватби, рождени дни и фирмени събития | Celebris Vibe"
   fullTitle
   og="home"
-  description="DJ, водещ, озвучаване и осветление за сватби и събития в София и района. Работим с предварителна уговорка. Провери свободна дата."
+  description="DJ и водещ за сватби, рождени дни, кръщенета, юбилеи, партита и фирмени събития. Озвучаване, осветление, караоке, фотокабина/фотобудка и ефекти; София и район."
   schema={[website]}
 >
   <script slot="head" is:inline define:vars={{ legacyMap }}>
