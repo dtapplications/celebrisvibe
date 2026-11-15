@@ -25,7 +25,7 @@ const schema = [
     description: s.description,
     url,
     provider: { '@id': abs(Astro.site, '#organization') },
-    areaServed: { '@type': 'Country', name: 'България' },
+    areaServed: { '@type': 'AdministrativeArea', name: 'София и околностите', containedInPlace: { '@type': 'Country', name: 'България' } },
     audience: { '@type': 'Audience', audienceType: s.fits.join(', ') },
   },
   {
@@ -38,7 +38,7 @@ const schema = [
   },
 ];
 ---
-<Base title={s.seoTitle} description={s.description} og={s.slug} schema={schema}>
+<Base title={s.seoTitle} description={s.seoDescription} og={s.slug} schema={schema}>
   <article class="page-top">
     <nav aria-label="Навигация" class="crumbs">
       <a href={href(ROUTES.services)}>Услуги</a> <span aria-hidden="true">/</span> <span aria-current="page">{s.title}</span>
