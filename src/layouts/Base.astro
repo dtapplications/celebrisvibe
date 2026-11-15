@@ -37,8 +37,16 @@ const organization = {
   email: CONTACT_EMAIL,
   telephone: CONTACT_PHONE,
   slogan: SLOGAN,
-  description: 'DJ, водещ, озвучаване и осветление за сватби, частни тържества и корпоративни събития в България.',
-  areaServed: { '@type': 'Country', name: 'България' },
+  description: 'DJ, водещ, озвучаване, осветление и организация на събития в София и околностите.',
+  areaServed: { '@type': 'AdministrativeArea', name: 'София и околностите', containedInPlace: { '@type': 'Country', name: 'България' } },
+  knowsAbout: ['DJ услуги', 'водене на събития', 'организация на събития', 'озвучаване', 'осветление'],
+  contactPoint: {
+    '@type': 'ContactPoint',
+    contactType: 'customer service',
+    telephone: CONTACT_PHONE,
+    email: CONTACT_EMAIL,
+    availableLanguage: 'Bulgarian',
+  },
   knowsLanguage: 'bg',
   ...(sameAs.length ? { sameAs } : {}),
 };
