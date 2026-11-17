@@ -19,6 +19,7 @@ const current = Astro.url.pathname;
       <span class="slogan">{SLOGAN}</span>
       <span>© {new Date().getFullYear()} {SITE_NAME}</span>
       <a href={href(ROUTES.privacy)} class="underline">Политика за поверителност</a>
+      <button type="button" class="privacy-settings" data-cookie-settings>Настройки за бисквитки</button>
     </div>
     <div class="social">
       <a href={SOCIAL.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram">
@@ -51,6 +52,8 @@ const current = Astro.url.pathname;
   .legal { display: flex; gap: 6px 20px; flex-wrap: wrap; align-items: center; }
   .slogan { flex-basis: 100%; }
   .underline { text-decoration: underline; text-underline-offset: 3px; }
+  .privacy-settings { padding: 0; border: 0; background: transparent; color: inherit; font-size: inherit; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+  .privacy-settings:hover { color: var(--ink); }
   .social { display: flex; gap: 10px; }
   .social a {
     width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--edge); color: var(--ink);
