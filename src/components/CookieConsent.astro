@@ -1,0 +1,149 @@
+---
+import { ROUTES } from '../data/site';
+import { href } from '../lib/urls';
+---
+
+<aside class="cookie-consent" data-cookie-banner role="region" aria-label="Настройки за аналитични бисквитки" hidden>
+  <div class="copy">
+    <h2>Бисквитки за статистика</h2>
+    <p>Google Analytics ни помага да разберем как се използва сайтът. Зарежда се само ако го разрешиш. <a href={href(ROUTES.privacy)}>Политика за поверителност</a></p>
+  </div>
+  <div class="actions">
+    <button class="btn btn-outline btn-sm" type="button" data-cookie-reject>Отказвам</button>
+    <button class="btn btn-outline btn-sm" type="button" data-cookie-accept>Разрешавам статистика</button>
+  </div>
+</aside>
+
+<script>
+  const GTM_ID = 'GTM-WMG6CRQ8';
+  const GA4_ID = 'G-5KRM64L1NP';
+  const CONSENT_KEY = 'cv-analytics-consent';
+  const banner = document.querySelector<HTMLElement>('[data-cookie-banner]')!;
+  const acceptButton = banner.querySelector<HTMLButtonElement>('[data-cookie-accept]')!;
+  const rejectButton = banner.querySelector<HTMLButtonElement>('[data-cookie-reject]')!;
+  const settingsButton = document.querySelector<HTMLButtonElement>('[data-cookie-settings]')!;
+  const tagManagerWindow = window as Window & {
+    dataLayer?: unknown[];
+    gtag?: (...args: unknown[]) => void;
+  };
+  let settingsOpener: HTMLButtonElement | null = null;
+
+  const readConsent = (): 'accepted' | 'rejected' | null => {
+    try {
+      const value = localStorage.getItem(CONSENT_KEY);
+      return value === 'accepted' || value === 'rejected' ? value : null;
+    } catch (error) {
+      console.error('Unable to read analytics consent.', error);
+      return null;
+    }
+  };
+
+  const saveConsent = (value: 'accepted' | 'rejected') => {
+    try {
+      localStorage.setItem(CONSENT_KEY, value);
+    } catch (error) {
+      console.error('Unable to save analytics consent.', error);
+    }
+  };
+
+  const loadTagManager = () => {
+    Reflect.set(window, `ga-disable-${GA4_ID}`, false);
+    tagManagerWindow.dataLayer = tagManagerWindow.dataLayer || [];
+    if (!tagManagerWindow.gtag) {
+      tagManagerWindow.gtag = (...args: unknown[]) => tagManagerWindow.dataLayer?.push(args);
+      tagManagerWindow.gtag('consent', 'default', {
+        analytics_storage: 'denied',
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+      });
+    }
+    tagManagerWindow.gtag('consent', 'update', { analytics_storage: 'granted' });
+
+    if (document.getElementById('cv-google-tag-manager')) return;
+
+    const script = document.createElement('script');
+    script.id = 'cv-google-tag-manager';
+    script.async = true;
+    script.src = `https://www.googletagmanager.com/gtm.js?id=${GTM_ID}`;
+    script.addEventListener('error', () => {
+      script.remove();
+      console.error('Google Tag Manager failed to load.');
+    }, { once: true });
+    tagManagerWindow.dataLayer.push({ 'gtm.start': Date.now(), event: 'gtm.js' });
+    document.head.append(script);
+  };
+
+  const clearAnalyticsCookies = () => {
+    for (const cookie of document.cookie.split(';')) {
+      const name = cookie.split('=', 1)[0].trim();
+      if (name === '_ga' || name.startsWith('_ga_')) {
+        document.cookie = `${name}=; Max-Age=0; Path=/; SameSite=Lax`;
+        document.cookie = `${name}=; Max-Age=0; Path=/; Domain=celebrisvibe.com; SameSite=Lax`;
+      }
+    }
+  };
+
+  const disableAnalytics = () => {
+    Reflect.set(window, `ga-disable-${GA4_ID}`, true);
+    tagManagerWindow.gtag?.('consent', 'update', { analytics_storage: 'denied' });
+    clearAnalyticsCookies();
+  };
+
+  const closeBanner = () => {
+    banner.hidden = true;
+    settingsOpener?.focus();
+    settingsOpener = null;
+  };
+
+  acceptButton.addEventListener('click', () => {
+    saveConsent('accepted');
+    loadTagManager();
+    closeBanner();
+  });
+
+  rejectButton.addEventListener('click', () => {
+    saveConsent('rejected');
+    disableAnalytics();
+    closeBanner();
+  });
+
+  settingsButton.addEventListener('click', () => {
+    settingsOpener = settingsButton;
+    banner.hidden = false;
+    acceptButton.focus();
+  });
+
+  const consent = readConsent();
+  if (consent === 'accepted') {
+    loadTagManager();
+  } else if (consent === 'rejected') {
+    disableAnalytics();
+  } else {
+    banner.hidden = false;
+  }
+</script>
+
+<style>
+  .cookie-consent {
+    position: fixed; z-index: 50; left: 50%; bottom: 20px; transform: translateX(-50%);
+    width: min(920px, calc(100vw - 32px)); display: grid; grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center; gap: 24px; padding: 20px 24px;
+    background: var(--paper); color: var(--ink); border: 1px solid var(--edge); border-radius: 20px;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.3);
+  }
+  .copy h2 { margin: 0; font: 600 20px/1.2 var(--font-display); }
+  .copy p { margin: 8px 0 0; color: var(--body); font-size: 15px; line-height: 1.45; }
+  .copy a { color: var(--gold); text-decoration: underline; text-underline-offset: 3px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 8px; }
+  .actions .btn { flex: 1 1 auto; }
+
+  @media (max-width: 640px) {
+    .cookie-consent {
+      bottom: 12px; grid-template-columns: 1fr; gap: 14px; padding: 16px;
+      max-height: calc(100vh - 24px); overflow-y: auto;
+    }
+    .actions { display: grid; grid-template-columns: 1fr 1fr; }
+    .actions .btn { min-width: 0; white-space: normal; }
+  }
+</style>

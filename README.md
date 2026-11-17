@@ -88,6 +88,7 @@ Also generated at build: `sitemap.xml`, `robots.txt`, `llms.txt`, `llms-full.txt
 - **Price calculator** (`/ceni/`): rules in `site.ts` → `ESTIMATE`, matching the published base prices (DJ 2 h €200, up to 5 h €300, + sound / host / lights €200 each).
 - **Enquiry form** (`/kontakti/`): sends an email to the client via [Web3Forms](https://web3forms.com). It does **not** write to the bookings sheet.
 - **Booked dates:** read from a Google Sheet published as CSV (column A, e.g. `31.12.2026`). The client adds confirmed bookings to the sheet; the site shows them within ~5 minutes, no redeploy needed.
+- **Analytics consent:** Google Tag Manager (`GTM-WMG6CRQ8`) loads only after a visitor accepts statistics. Add a Google tag in that GTM container with the GA4 Measurement ID `G-5KRM64L1NP`; the consent banner controls analytics storage.
 - **Enquiry pre-fill:** buttons across the site (calculator, extras, services) pre-fill the contact form via `sessionStorage`.
 
 ## Configuration
