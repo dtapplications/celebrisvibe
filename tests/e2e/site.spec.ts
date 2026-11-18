@@ -138,7 +138,7 @@ test.describe('pages', () => {
 
 test.describe('cookie consent', () => {
   test('loads Google Tag Manager only after consent and revokes analytics consent', async ({ page }) => {
-    const tagManagerScript = 'https://www.googletagmanager.com/gtm.js?id=GTM-WMG6CRQ8';
+    const tagManagerScript = 'https://www.googletagmanager.com/gtm.js?id=GTM-55HHXXWL';
     const requests: string[] = [];
     page.on('request', request => {
       if (request.url() === tagManagerScript) requests.push(request.url());
@@ -146,12 +146,13 @@ test.describe('cookie consent', () => {
     await page.route(tagManagerScript, route => route.fulfill({ contentType: 'application/javascript', body: '' }));
 
     await page.goto('/');
-    const banner = page.getByRole('region', { name: 'Настройки за аналитични бисквитки' });
+    const banner = page.locator('[data-cookie-banner]');
     await expect(banner).toBeVisible();
     expect(requests).toEqual([]);
 
     await banner.getByRole('button', { name: 'Отказвам' }).click();
     await expect(banner).toBeHidden();
+    await expect(banner).toHaveCSS('display', 'none');
     expect(await page.evaluate(() => localStorage.getItem('cv-analytics-consent'))).toBe('rejected');
     await page.reload();
     await expect(banner).toBeHidden();
@@ -159,8 +160,10 @@ test.describe('cookie consent', () => {
 
     await page.getByRole('button', { name: 'Настройки за бисквитки' }).click();
     const tagManagerRequest = page.waitForRequest(tagManagerScript);
-    await banner.getByRole('button', { name: 'Разрешавам статистика' }).click();
+    await banner.getByRole('button', { name: 'Приемам' }).click();
     await tagManagerRequest;
+    await expect(banner).toBeHidden();
+    await expect(banner).toHaveCSS('display', 'none');
     expect(await page.evaluate(() => localStorage.getItem('cv-analytics-consent'))).toBe('accepted');
     expect(requests).toHaveLength(1);
     const consentCommands = await page.evaluate(() => {
