@@ -8,6 +8,7 @@ import '@fontsource/onest/700.css';
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import MusicPlayer from '../components/MusicPlayer.astro';
 import CookieConsent from '../components/CookieConsent.astro';
 import SeoMeta from '../components/SeoMeta.astro';
 import { CONTACT_EMAIL, CONTACT_PHONE, SITE_NAME, SLOGAN, SOCIAL } from '../data/site';
@@ -73,6 +74,7 @@ const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': [org
     <slot />
   </main>
   <Footer />
+  <MusicPlayer />
   <CookieConsent />
 </body>
 </html>
