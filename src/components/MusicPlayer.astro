@@ -1,184 +1,565 @@
 ---
-import Icon from './Icon.astro';
+import Logo from './Logo.astro';
 
-const MUSIC_PLAYER = {
-  title: 'Celebris Vibe Radio',
-  subtitle: 'Музика за настроението',
-  playlistId: 'RDMM',
-  youtubeMusicUrl: 'https://music.youtube.com/',
-};
-const embedUrl = `https://www.youtube-nocookie.com/embed/videoseries?list=${MUSIC_PLAYER.playlistId}&autoplay=1&rel=0`;
+const DECKS = [
+  { title: 'House Heat', genre: 'HOUSE', bpm: 124, color: '#c9ad78' },
+  { title: 'Hip-Hop Ride', genre: 'HIP-HOP', bpm: 92, color: '#d8c09a' },
+  { title: 'R&B Velvet', genre: 'R&B', bpm: 82, color: '#b99d75' },
+  { title: 'Rock Spark', genre: 'ROCK', bpm: 118, color: '#aa8a56' },
+  { title: 'Latin Pulse', genre: 'LATIN', bpm: 105, color: '#dec79d' },
+  { title: 'Pop Glow', genre: 'POP', bpm: 112, color: '#d2b785' },
+  { title: 'Disco Night', genre: 'DISCO', bpm: 116, color: '#c6a86f' },
+  { title: 'Electro Drive', genre: 'ELECTRO', bpm: 128, color: '#d5c18f' },
+  { title: 'Chill Groove', genre: 'CHILL', bpm: 88, color: '#b59a70' },
+] as const;
 ---
 
-<aside class="music-player" data-music-player aria-label="Музикален плейър">
-  <button type="button" class="player-trigger" data-player-trigger aria-expanded="false" aria-controls="music-player-panel">
-    <span class="disc" aria-hidden="true">
-      <Icon name="music" size={18} />
-    </span>
-    <span class="trigger-copy">
-      <strong>{MUSIC_PLAYER.title}</strong>
-      <small>{MUSIC_PLAYER.subtitle}</small>
-    </span>
-    <span class="equalizer" aria-hidden="true"><i></i><i></i><i></i></span>
+<aside class="dj-player" data-dj-player aria-label="Celebris Vibe DJ плейър">
+  <button type="button" class="dj-launch" data-dj-launch aria-expanded="false" aria-controls="dj-panel">
+    <span class="launch-disc"><Logo height={34} label="" /></span>
+    <span class="launch-copy"><strong>Try the Mix</strong><small>Celebris Vibe DJ</small></span>
   </button>
 
-  <section class="player-panel" id="music-player-panel" data-player-panel hidden aria-label="Celebris Vibe Radio">
-    <header class="panel-head">
-      <div>
-        <span class="eyebrow">YouTube Music</span>
-        <h2>{MUSIC_PLAYER.title}</h2>
+  <section class="dj-panel" id="dj-panel" data-dj-panel hidden>
+    <header class="dj-head">
+      <div class="brand">
+        <Logo height={44} label="Celebris Vibe" />
       </div>
-      <button type="button" class="close" data-player-close aria-label="Затвори плейъра">
-        <Icon name="close" size={18} />
-      </button>
+      <div class="live"><i></i> DJ DEMO</div>
+      <button type="button" class="dj-close" data-dj-close aria-label="Затвори DJ плейъра">×</button>
     </header>
-    <div class="frame-wrap">
-      <iframe
-        data-player-frame
-        title="YouTube Music радио"
-        src=""
-        data-src={embedUrl}
-        loading="lazy"
-        allow="autoplay; encrypted-media; picture-in-picture"
-        referrerpolicy="strict-origin-when-cross-origin"
-        allowfullscreen
-      ></iframe>
+
+    <div class="deck-grid">
+      {DECKS.slice(0, 1).map(() => (
+        <article class="deck" data-deck="A">
+          <audio data-audio="A" src="/audio/demos/house.mp3" preload="metadata" loop></audio>
+          <div class="deck-meta">
+            <span>DECK A</span><strong data-deck-title>A</strong>
+          </div>
+          <button type="button" class="record" data-record="A" aria-label="Scratch Deck A">
+            <span class="record-ring"></span>
+            <span class="record-logo"><Logo height={34} label="" /></span>
+            <span class="record-dot"></span>
+          </button>
+          <div class="deck-readout"><strong data-track-title={DECKS[0].title}>{DECKS[0].title}</strong><span data-bpm>A · 124 BPM</span></div>
+          <div class="deck-tuning" aria-label="Настройки за Deck A">
+            <label class="tempo">
+              <span>Tempo</span>
+              <input type="range" min="80" max="120" value="100" step="1" data-tempo="A" aria-label="Tempo Deck A" />
+              <strong data-tempo-value="A">100%</strong>
+            </label>
+            <div class="eq">
+              <label><span>LOW</span><input type="range" min="-12" max="12" value="0" step="1" data-eq="A" data-band="low" aria-label="Low Deck A" /></label>
+              <label><span>MID</span><input type="range" min="-12" max="12" value="0" step="1" data-eq="A" data-band="mid" aria-label="Mid Deck A" /></label>
+              <label><span>HIGH</span><input type="range" min="-12" max="12" value="0" step="1" data-eq="A" data-band="high" aria-label="High Deck A" /></label>
+            </div>
+          </div>
+          <div class="deck-controls">
+            <button type="button" data-play="A" aria-label="Пусни Deck A">▶</button>
+            <button type="button" data-sync="A" aria-label="SYNC към Deck A">SYNC</button>
+            <button type="button" data-loop="A" aria-label="Loop Deck A">LOOP</button>
+            <button type="button" data-reset="A" aria-label="Reset Deck A">RESET</button>
+            <button type="button" data-cue="A" aria-label="Cue Deck A">CUE</button>
+          </div>
+        </article>
+      ))}
+
+      {DECKS.slice(0, 1).map(() => (
+        <article class="deck" data-deck="B">
+          <audio data-audio="B" src="/audio/demos/hiphop.mp3" preload="metadata" loop></audio>
+          <div class="deck-meta">
+            <span>DECK B</span><strong data-deck-title>B</strong>
+          </div>
+          <button type="button" class="record" data-record="B" aria-label="Scratch Deck B">
+            <span class="record-ring"></span>
+            <span class="record-logo"><Logo height={34} label="" /></span>
+            <span class="record-dot"></span>
+          </button>
+          <div class="deck-readout"><strong data-track-title={DECKS[1].title}>{DECKS[1].title}</strong><span data-bpm>B · 92 BPM</span></div>
+          <div class="deck-tuning" aria-label="Настройки за Deck B">
+            <label class="tempo">
+              <span>Tempo</span>
+              <input type="range" min="80" max="120" value="100" step="1" data-tempo="B" aria-label="Tempo Deck B" />
+              <strong data-tempo-value="B">100%</strong>
+            </label>
+            <div class="eq">
+              <label><span>LOW</span><input type="range" min="-12" max="12" value="0" step="1" data-eq="B" data-band="low" aria-label="Low Deck B" /></label>
+              <label><span>MID</span><input type="range" min="-12" max="12" value="0" step="1" data-eq="B" data-band="mid" aria-label="Mid Deck B" /></label>
+              <label><span>HIGH</span><input type="range" min="-12" max="12" value="0" step="1" data-eq="B" data-band="high" aria-label="High Deck B" /></label>
+            </div>
+          </div>
+          <div class="deck-controls">
+            <button type="button" data-play="B" aria-label="Пусни Deck B">▶</button>
+            <button type="button" data-sync="B" aria-label="SYNC към Deck B">SYNC</button>
+            <button type="button" data-loop="B" aria-label="Loop Deck B">LOOP</button>
+            <button type="button" data-reset="B" aria-label="Reset Deck B">RESET</button>
+            <button type="button" data-cue="B" aria-label="Cue Deck B">CUE</button>
+          </div>
+        </article>
+      ))}
     </div>
-    <a class="youtube-link" href={MUSIC_PLAYER.youtubeMusicUrl} target="_blank" rel="noopener noreferrer">
-      Отвори в YouTube Music
-      <Icon name="arrowRight" size={16} />
-    </a>
+
+    <div class="cross-section">
+      <span>A</span>
+      <input type="range" min="-100" max="100" value="0" data-crossfader aria-label="Crossfader" />
+      <span>B</span>
+    </div>
+
+    <div class="genre-bank" aria-label="Избор на demo samples">
+      {DECKS.map((sample, index) => (
+        <button type="button" data-sample={index} data-deck-target={index % 2 === 0 ? 'A' : 'B'}>
+          <span>{sample.genre}</span><strong>{sample.title}</strong><small>{sample.bpm} BPM</small>
+        </button>
+      ))}
+    </div>
   </section>
 </aside>
 
 <style>
-  .music-player {
-    position: fixed;
-    right: 24px;
-    bottom: 24px;
-    z-index: 40;
+  audio { display: none; }
+  .dj-player { position: fixed; right: 24px; bottom: 24px; z-index: 40; }
+  .dj-launch {
+    height: 68px; min-width: 214px; display: grid; grid-template-columns: 44px 1fr;
+    align-items: center; gap: 10px; padding: 10px 14px 10px 10px;
+    border: 1px solid var(--line); border-radius: 999px; background: var(--header-bg);
+    backdrop-filter: blur(16px); box-shadow: 0 18px 50px -24px rgba(0,0,0,.65);
+    color: var(--ink); text-align: left; cursor: pointer;
   }
-  .player-trigger {
-    width: 238px;
-    min-height: 68px;
+  .dj-launch:hover { border-color: var(--gold); }
+  .launch-disc {
+    width: 44px; height: 44px; display: grid; place-items: center;
+    border: 1px solid var(--frame); border-radius: 50%; background: var(--paper);
+  }
+  .launch-copy { display: flex; flex-direction: column; }
+  .launch-copy strong { font-family: var(--font-display); font-size: 14px; }
+  .launch-copy small { margin-top: 2px; color: var(--muted); font-size: 12px; }
+
+  .dj-panel {
+    position: absolute; right: 0; bottom: 80px; width: min(720px, calc(100vw - 32px));
+    max-height: calc(100vh - 112px); overflow-y: auto; overscroll-behavior: contain;
+    border: 1px solid var(--edge); border-radius: 28px;
+    background: var(--paper); box-shadow: 0 28px 70px -30px rgba(0,0,0,.75);
+  }
+  .dj-head {
+    height: 64px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
+    padding: 8px 10px 8px 16px; border-bottom: 1px solid var(--line);
+  }
+  .brand :global(.logo) { max-height: 44px; }
+  .live { color: var(--muted); font-family: var(--font-display); font-size: 11px; letter-spacing: .14em; }
+  .live i { width: 7px; height: 7px; display: inline-block; margin-right: 7px; border-radius: 50%; background: var(--danger); box-shadow: 0 0 12px var(--danger); }
+  .dj-close {
+    width: 38px; height: 38px; justify-self: end; border: 1px solid var(--line); border-radius: 50%;
+    background: var(--card); color: var(--ink); font-size: 24px; line-height: 1; cursor: pointer;
+  }
+  .deck-grid { display: grid; grid-template-columns: 1fr 1fr; }
+  .deck { min-width: 0; padding: 14px; background: var(--stripes); }
+  .deck:first-child { border-right: 1px solid var(--line); }
+  .deck-meta { display: flex; justify-content: space-between; align-items: center; color: var(--muted); font-size: 10px; letter-spacing: .12em; }
+  .deck-meta strong { color: var(--gold); font-family: var(--font-display); }
+  .record {
+    position: relative; width: 142px; height: 142px; display: block; margin: 8px auto;
+    border: 1px solid var(--edge); border-radius: 50%; background: repeating-radial-gradient(circle, #202126 0 4px, #111217 5px 7px);
+    box-shadow: inset 0 0 22px rgba(0,0,0,.7), 0 10px 30px -18px rgba(0,0,0,.8);
+    cursor: grab; touch-action: none;
+  }
+  .record.is-scratching { cursor: grabbing; }
+  .record.is-playing { animation: cvspin 2s linear infinite; }
+  .record-ring {
+    position: absolute; inset: 18px; border: 1px solid var(--frame); border-radius: 50%;
+  }
+  .record-logo {
+    position: absolute; inset: 38px; display: grid; place-items: center;
+    border-radius: 50%; background: var(--paper); color: var(--ink);
+  }
+  .record-dot { position: absolute; left: 50%; top: 50%; width: 7px; height: 7px; margin: -3.5px; border-radius: 50%; background: var(--gold); }
+  .deck-readout { display: flex; justify-content: space-between; gap: 8px; min-height: 31px; align-items: center; }
+  .deck-readout strong { max-width: 190px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; }
+  .deck-readout span { color: var(--muted); font-size: 10px; white-space: nowrap; }
+  .deck-controls { display: grid; grid-template-columns: 1fr repeat(4, minmax(46px, auto)); gap: 6px; margin-top: 8px; }
+  .deck-controls button {
+    height: 38px; border: 1px solid var(--line); border-radius: 12px; background: var(--card);
+    color: var(--ink); font-family: var(--font-display); cursor: pointer;
+  }
+  .deck-controls button:first-child { color: var(--gold); font-size: 13px; }
+  .deck-controls button.active { background: var(--ink); color: var(--paper); }
+  .deck-tuning {
     display: grid;
-    grid-template-columns: 44px 1fr 22px;
-    align-items: center;
+    grid-template-columns: minmax(90px, 1fr) minmax(120px, 1.35fr);
     gap: 10px;
-    padding: 10px 12px;
-    border: 1px solid var(--line);
-    border-radius: 20px;
-    background: var(--header-bg);
-    backdrop-filter: blur(16px);
-    box-shadow: 0 18px 50px -24px rgba(0,0,0,0.55);
-    color: var(--ink);
-    text-align: left;
-    cursor: pointer;
+    align-items: end;
+    margin-top: 8px;
   }
-  .player-trigger:hover { border-color: var(--gold); }
-  .disc {
-    width: 44px;
-    height: 44px;
+  .tempo {
     display: grid;
-    place-items: center;
-    border: 1px solid var(--frame);
-    border-radius: 50%;
-    color: var(--paper);
-    background: linear-gradient(135deg, var(--gold), var(--frame));
+    grid-template-columns: 1fr auto;
+    gap: 4px 8px;
+    color: var(--muted);
+    font-size: 9px;
+    letter-spacing: .08em;
   }
-  .trigger-copy { display: flex; flex-direction: column; min-width: 0; }
-  .trigger-copy strong { font-family: var(--font-display); font-size: 14px; }
-  .trigger-copy small { margin-top: 2px; color: var(--muted); font-size: 12px; }
-  .equalizer { height: 18px; display: flex; align-items: end; justify-content: center; gap: 3px; }
-  .equalizer i { width: 3px; border-radius: 3px; background: var(--gold); animation: cvpulse 900ms ease-in-out infinite alternate; }
-  .equalizer i:nth-child(1) { height: 8px; }
-  .equalizer i:nth-child(2) { height: 16px; animation-delay: -300ms; }
-  .equalizer i:nth-child(3) { height: 11px; animation-delay: -600ms; }
-  .player-panel {
-    position: absolute;
-    right: 0;
-    bottom: 78px;
-    width: min(380px, calc(100vw - 32px));
-    overflow: hidden;
-    border: 1px solid var(--edge);
-    border-radius: 24px;
-    background: var(--paper);
-    box-shadow: 0 28px 70px -30px rgba(0,0,0,0.7);
-  }
-  .panel-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    padding: 16px 16px 14px;
-  }
-  .panel-head h2 { margin: 4px 0 0; font-family: var(--font-display); font-size: 18px; letter-spacing: -0.02em; }
-  .eyebrow { color: var(--eyebrow); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; }
-  .close {
-    width: 36px;
-    height: 36px;
-    flex: none;
+  .tempo input { grid-column: 1 / -1; width: 100%; height: 14px; }
+  .tempo strong { grid-column: 2; grid-row: 1; color: var(--gold); font-size: 9px; }
+  .eq { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
+  .eq label {
+    min-width: 0;
     display: grid;
-    place-items: center;
-    border: 1px solid var(--line);
-    border-radius: 50%;
-    background: var(--card);
-    color: var(--ink);
-    cursor: pointer;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 2px;
+    color: var(--muted);
+    font-size: 8px;
   }
-  .frame-wrap { aspect-ratio: 16 / 9; background: var(--card); }
-  iframe { width: 100%; height: 100%; border: 0; display: block; }
-  .youtube-link {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 14px 16px;
-    color: var(--ink);
-    font-size: 14px;
-    font-weight: 500;
+  .eq input {
+    width: 38px;
+    height: 54px;
+    writing-mode: vertical-lr;
+    direction: rtl;
   }
-  .youtube-link:hover { color: var(--gold); }
+  .cross-section { display: grid; grid-template-columns: 26px 1fr 26px; align-items: center; gap: 8px; padding: 10px 14px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .cross-section span { font-family: var(--font-display); font-size: 11px; color: var(--muted); text-align: center; }
+  input[type='range'] { width: 100%; accent-color: var(--gold); cursor: pointer; }
+  .genre-bank { display: grid; grid-template-columns: repeat(9, 1fr); gap: 6px; padding: 8px; }
+  .genre-bank button {
+    min-width: 0; display: flex; flex-direction: column; gap: 3px; padding: 9px 8px;
+    border: 1px solid var(--line); border-radius: 12px; background: var(--card); color: var(--ink); text-align: left; cursor: pointer;
+  }
+  .genre-bank button:hover { border-color: var(--gold); }
+  .genre-bank button.active { border-color: var(--gold); background: var(--paper); }
+  .genre-bank span { color: var(--gold); font-size: 9px; letter-spacing: .1em; }
+  .genre-bank strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11px; }
+  .genre-bank small { color: var(--muted); font-size: 9px; }
 
-  @keyframes cvpulse {
-    from { transform: scaleY(0.45); opacity: 0.55; }
-    to { transform: scaleY(1); opacity: 1; }
-  }
-
+  @keyframes cvspin { to { transform: rotate(360deg); } }
   @media (max-width: 640px) {
-    .music-player { right: 12px; bottom: 12px; }
-    .player-trigger { width: 62px; grid-template-columns: 44px; min-height: 62px; }
-    .trigger-copy, .equalizer { display: none; }
-    .player-panel { bottom: 72px; }
+    .dj-player { right: 12px; bottom: 12px; }
+    .dj-launch { min-width: 62px; width: 62px; height: 62px; grid-template-columns: 44px; padding: 8px; }
+    .launch-copy { display: none; }
+    .dj-panel { bottom: 72px; width: calc(100vw - 24px); max-height: calc(100vh - 100px); overflow-y: auto; }
+    .dj-head { height: 58px; }
+    .record { width: 112px; height: 112px; }
+    .record-logo { inset: 30px; }
+    .record-logo :global(.logo) { height: 28px; }
+    .deck-readout { align-items: flex-start; flex-direction: column; }
+    .deck-readout strong { max-width: 130px; }
+    .deck-tuning { grid-template-columns: 1fr; }
+    .eq input { width: 100%; height: 42px; }
+    .deck-controls { grid-template-columns: repeat(3, 1fr); }
+    .deck-controls button { min-width: 0; padding: 0 4px; font-size: 11px; }
+    .genre-bank { grid-template-columns: repeat(2, 1fr); }
   }
+  @media (prefers-reduced-motion: reduce) { .record.is-playing { animation: none; } }
 </style>
 
 <script>
-  const player = document.querySelector<HTMLElement>('[data-music-player]')!;
-  const trigger = player.querySelector<HTMLButtonElement>('[data-player-trigger]')!;
-  const panel = player.querySelector<HTMLElement>('[data-player-panel]')!;
-  const close = player.querySelector<HTMLButtonElement>('[data-player-close]')!;
-  const frame = player.querySelector<HTMLIFrameElement>('[data-player-frame]')!;
+  const player = document.querySelector<HTMLElement>('[data-dj-player]')!;
+  const launch = player.querySelector<HTMLButtonElement>('[data-dj-launch]')!;
+  const panel = player.querySelector<HTMLElement>('[data-dj-panel]')!;
+  const close = player.querySelector<HTMLButtonElement>('[data-dj-close]')!;
+  const crossfader = player.querySelector<HTMLInputElement>('[data-crossfader]')!;
 
-  const setOpen = (open: boolean) => {
-    panel.hidden = !open;
-    trigger.setAttribute('aria-expanded', String(open));
-    if (open) {
-      if (!frame.hasAttribute('src') || frame.getAttribute('src') === '') frame.src = frame.dataset.src || '';
-    } else {
-      frame.removeAttribute('src');
+  const samples = [
+    { title: 'House Heat', genre: 'HOUSE', bpm: 124, base: 55, style: 'house' },
+    { title: 'Hip-Hop Ride', genre: 'HIP-HOP', bpm: 92, base: 65.41, style: 'hiphop' },
+    { title: 'R&B Velvet', genre: 'R&B', bpm: 82, base: 73.42, style: 'rnb' },
+    { title: 'Rock Spark', genre: 'ROCK', bpm: 118, base: 82.41, style: 'rock' },
+    { title: 'Latin Pulse', genre: 'LATIN', bpm: 105, base: 98, style: 'latin' },
+    { title: 'Pop Glow', genre: 'POP', bpm: 112, base: 110, style: 'pop' },
+    { title: 'Disco Night', genre: 'DISCO', bpm: 116, base: 116, style: 'disco' },
+    { title: 'Electro Drive', genre: 'ELECTRO', bpm: 128, base: 128, style: 'electro' },
+    { title: 'Chill Groove', genre: 'CHILL', bpm: 88, base: 88, style: 'chill' },
+  ];
+
+  let context: AudioContext | null = null;
+  let master: GainNode | null = null;
+  let leftGain: GainNode | null = null;
+  let rightGain: GainNode | null = null;
+  let timers: Record<string, number> = { A: 0, B: 0 };
+  let selected: Record<string, number> = { A: 0, B: 1 };
+  let scratchFrames: Record<string, number> = { A: 0, B: 0 };
+  let sources: Partial<Record<'A' | 'B', MediaElementAudioSourceNode>> = {};
+  let eq: Record<string, { low: BiquadFilterNode; mid: BiquadFilterNode; high: BiquadFilterNode }> = {
+    A: {} as { low: BiquadFilterNode; mid: BiquadFilterNode; high: BiquadFilterNode },
+    B: {} as { low: BiquadFilterNode; mid: BiquadFilterNode; high: BiquadFilterNode },
+  };
+
+  const ensureAudio = async () => {
+    if (!context) {
+      context = new AudioContext();
+      master = context.createGain();
+      leftGain = context.createGain();
+      rightGain = context.createGain();
+      leftGain.gain.value = 0.5;
+      rightGain.gain.value = 0.5;
+      leftGain.connect(master);
+      rightGain.connect(master);
+      master.gain.value = 0.38;
+      master.connect(context.destination);
+      (['A', 'B'] as const).forEach(deck => {
+        const audio = player.querySelector<HTMLAudioElement>(`[data-audio="${deck}"]`)!;
+        const source = context!.createMediaElementSource(audio);
+        sources[deck] = source;
+        const low = context!.createBiquadFilter();
+        low.type = 'lowshelf';
+        low.frequency.value = 250;
+        low.gain.value = 0;
+        const mid = context!.createBiquadFilter();
+        mid.type = 'peaking';
+        mid.frequency.value = 1000;
+        mid.Q.value = 1;
+        mid.gain.value = 0;
+        const high = context!.createBiquadFilter();
+        high.type = 'highshelf';
+        high.frequency.value = 5000;
+        high.gain.value = 0;
+        eq[deck] = { low, mid, high };
+        source.connect(low);
+        low.connect(mid);
+        mid.connect(high);
+        high.connect(deck === 'A' ? leftGain! : rightGain!);
+      });
+    }
+    if (context.state === 'suspended') await context.resume();
+  };
+
+  const noise = (gainValue: number, filterType: BiquadFilterType = 'highpass') => {
+    if (!context || !master) return;
+    const buffer = context.createBuffer(1, context.sampleRate * 0.045, context.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+    const source = context.createBufferSource();
+    const filter = context.createBiquadFilter();
+    const gain = context.createGain();
+    source.buffer = buffer;
+    filter.type = filterType;
+    filter.frequency.value = filterType === 'highpass' ? 5000 : 900;
+    gain.gain.setValueAtTime(gainValue, context.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, context.currentTime + 0.05);
+    source.connect(filter); filter.connect(gain); gain.connect(master);
+    source.start();
+  };
+
+  const tone = (deck: 'A' | 'B', frequency: number, length = 0.18) => {
+    const gainNode = deck === 'A' ? leftGain : rightGain;
+    if (!context || !gainNode) return;
+    const oscillator = context.createOscillator();
+    const gain = context.createGain();
+    oscillator.type = deck === 'A' ? 'triangle' : 'sine';
+    oscillator.frequency.value = frequency;
+    gain.gain.setValueAtTime(deck === 'A' ? 0.19 : 0.17, context.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, context.currentTime + length);
+    oscillator.connect(gain); gain.connect(gainNode);
+    oscillator.start(); oscillator.stop(context.currentTime + length);
+  };
+
+  const stopDeck = (deck: 'A' | 'B') => {
+    if (timers[deck]) window.clearInterval(timers[deck]);
+    timers[deck] = 0;
+    const audio = player.querySelector<HTMLAudioElement>(`[data-audio="${deck}"]`);
+    if (audio) {
+      audio.pause();
+      audio.currentTime = 0;
+    }
+    player.querySelector(`[data-record="${deck}"]`)?.classList.remove('is-playing');
+    player.querySelector(`[data-play="${deck}"]`)?.classList.remove('active');
+  };
+
+  const playDeck = async (deck: 'A' | 'B') => {
+    if (timers[deck]) { stopDeck(deck); return; }
+    await ensureAudio();
+    const audio = player.querySelector<HTMLAudioElement>(`[data-audio="${deck}"]`);
+    if (!audio) return;
+    await audio.play();
+    timers[deck] = window.setInterval(() => {}, 1000);
+    player.querySelector(`[data-record="${deck}"]`)?.classList.add('is-playing');
+    player.querySelector(`[data-play="${deck}"]`)?.classList.add('active');
+  };
+
+  const selectSample = (index: number) => {
+    const target = index % 2 === 0 ? 'A' : 'B';
+    selected[target] = index;
+    const sample = samples[index];
+    const deck = player.querySelector<HTMLElement>(`[data-deck="${target}"]`)!;
+    deck.querySelector<HTMLElement>('[data-track-title]')!.textContent = sample.title;
+    deck.querySelector<HTMLElement>('[data-bpm]')!.textContent = `${target} · ${sample.bpm} BPM`;
+    const files = ['house', 'hiphop', 'rnb', 'rock', 'latin', 'pop', 'disco', 'electro', 'chill'];
+    const audio = player.querySelector<HTMLAudioElement>(`[data-audio="${target}"]`);
+    if (audio) {
+      const wasPlaying = timers[target] !== 0;
+      if (wasPlaying) audio.pause();
+      audio.src = `/audio/demos/${files[index]}.mp3`;
+      audio.load();
+      const tempoInput = player.querySelector<HTMLInputElement>(`[data-tempo="${target}"]`);
+      if (tempoInput) {
+        audio.playbackRate = Number(tempoInput.value) / 100;
+        audio.preservesPitch = true;
+      }
+      if (wasPlaying) void audio.play();
+    }
+    player.querySelectorAll('[data-sample]').forEach(button => button.classList.toggle('active', Number((button as HTMLElement).dataset.sample) === index));
+    if (timers[target]) {
+      stopDeck(target);
+      void playDeck(target);
     }
   };
 
-  trigger.addEventListener('click', () => setOpen(panel.hidden));
+  crossfader.addEventListener('input', () => {
+    if (!leftGain || !rightGain) return;
+    const value = Number(crossfader.value);
+    leftGain.gain.value = value <= 0 ? 1 : (100 - value) / 100;
+    rightGain.gain.value = value >= 0 ? 1 : (100 + value) / 100;
+  });
+
+  player.querySelectorAll<HTMLInputElement>('[data-tempo]').forEach(input => {
+    input.addEventListener('input', async () => {
+      const deck = input.dataset.tempo as 'A' | 'B';
+      const percent = Number(input.value);
+      await ensureAudio();
+      const audio = player.querySelector<HTMLAudioElement>(`[data-audio="${deck}"]`);
+      if (audio) {
+        audio.playbackRate = percent / 100;
+        audio.preservesPitch = true;
+      }
+      const value = player.querySelector<HTMLElement>(`[data-tempo-value="${deck}"]`);
+      if (value) value.textContent = `${percent}%`;
+    });
+  });
+
+  player.querySelectorAll<HTMLInputElement>('[data-eq]').forEach(input => {
+    input.addEventListener('input', async () => {
+      const deck = input.dataset.eq as 'A' | 'B';
+      const band = input.dataset.band as 'low' | 'mid' | 'high';
+      await ensureAudio();
+      const filter = eq[deck]?.[band];
+      if (filter) filter.gain.value = Number(input.value);
+    });
+  });
+
+  player.querySelectorAll<HTMLButtonElement>('[data-play]').forEach(button => {
+    button.addEventListener('click', () => void playDeck(button.dataset.play as 'A' | 'B'));
+  });
+  player.querySelectorAll<HTMLButtonElement>('[data-sample]').forEach(button => {
+    button.addEventListener('click', () => selectSample(Number(button.dataset.sample)));
+  });
+  player.querySelectorAll<HTMLButtonElement>('[data-cue]').forEach(button => {
+    button.addEventListener('click', () => {
+      const deck = button.dataset.cue as 'A' | 'B';
+      if (timers[deck]) stopDeck(deck);
+      button.classList.add('active');
+      window.setTimeout(() => button.classList.remove('active'), 250);
+    });
+  });
+
+  player.querySelectorAll<HTMLButtonElement>('[data-sync]').forEach(button => {
+    button.addEventListener('click', () => {
+      const sourceDeck = button.dataset.sync as 'A' | 'B';
+      const targetDeck = sourceDeck === 'A' ? 'B' : 'A';
+      const source = player.querySelector<HTMLAudioElement>(`[data-audio="${sourceDeck}"]`);
+      const target = player.querySelector<HTMLAudioElement>(`[data-audio="${targetDeck}"]`);
+      if (!source || !target) return;
+
+      const sourceBpm = samples[selected[sourceDeck]].bpm;
+      const targetBpm = samples[selected[targetDeck]].bpm;
+      const targetPercent = Math.round(Math.max(80, Math.min(120, (sourceBpm / targetBpm) * 100)));
+
+      target.playbackRate = targetPercent / 100;
+      target.preservesPitch = true;
+      const tempo = player.querySelector<HTMLInputElement>(`[data-tempo="${targetDeck}"]`);
+      const tempoValue = player.querySelector<HTMLElement>(`[data-tempo-value="${targetDeck}"]`);
+      if (tempo) tempo.value = String(targetPercent);
+      if (tempoValue) tempoValue.textContent = `${targetPercent}%`;
+
+      if (source.duration && target.duration) {
+        const sourceBeat = 60 / sourceBpm;
+        const targetBeat = 60 / (sourceBpm);
+        const phase = ((source.currentTime % sourceBeat) / sourceBeat);
+        target.currentTime = Math.min(target.duration - 0.01, targetBeat * phase);
+      }
+
+      button.classList.add('active');
+      window.setTimeout(() => button.classList.remove('active'), 600);
+    });
+  });
+
+  player.querySelectorAll<HTMLButtonElement>('[data-loop]').forEach(button => {
+    button.addEventListener('click', () => {
+      const deck = button.dataset.loop as 'A' | 'B';
+      const audio = player.querySelector<HTMLAudioElement>(`[data-audio="${deck}"]`);
+      if (!audio) return;
+      audio.loop = !audio.loop;
+      button.classList.toggle('active', audio.loop);
+    });
+  });
+
+  player.querySelectorAll<HTMLButtonElement>('[data-reset]').forEach(button => {
+    button.addEventListener('click', () => {
+      const deck = button.dataset.reset as 'A' | 'B';
+      const audio = player.querySelector<HTMLAudioElement>(`[data-audio="${deck}"]`);
+      if (audio) {
+        audio.playbackRate = 1;
+        audio.preservesPitch = true;
+      }
+      const tempo = player.querySelector<HTMLInputElement>(`[data-tempo="${deck}"]`);
+      const tempoValue = player.querySelector<HTMLElement>(`[data-tempo-value="${deck}"]`);
+      if (tempo) tempo.value = '100';
+      if (tempoValue) tempoValue.textContent = '100%';
+      player.querySelectorAll<HTMLInputElement>(`[data-eq="${deck}"]`).forEach(input => {
+        input.value = '0';
+        const band = input.dataset.band as 'low' | 'mid' | 'high';
+        const filter = eq[deck]?.[band];
+        if (filter) filter.gain.value = 0;
+      });
+      button.classList.add('active');
+      window.setTimeout(() => button.classList.remove('active'), 250);
+    });
+  });
+
+  player.querySelectorAll<HTMLButtonElement>('[data-record]').forEach(record => {
+    let startX = 0;
+    const deck = record.dataset.record as 'A' | 'B';
+    const scratchStart = (event: PointerEvent) => {
+      startX = event.clientX;
+      record.classList.add('is-scratching');
+      record.setPointerCapture(event.pointerId);
+      scratchFrames[deck] = window.setInterval(() => noise(0.09, 'bandpass'), 55);
+      const audio = player.querySelector<HTMLAudioElement>(`[data-audio="${deck}"]`);
+      if (audio) audio.pause();
+    };
+    const scratchMove = (event: PointerEvent) => {
+      if (!record.classList.contains('is-scratching') || !context) return;
+      const distance = event.clientX - startX;
+      record.style.transform = `rotate(${distance * 0.6}deg)`;
+      if (Math.abs(distance) > 12) tone(deck, 110 + Math.abs(distance) * 2, 0.06);
+      const audio = player.querySelector<HTMLAudioElement>(`[data-audio="${deck}"]`);
+      if (audio && audio.duration) {
+        audio.currentTime = Math.max(0, Math.min(audio.duration - 0.1, audio.currentTime + distance * 0.002));
+        startX = event.clientX;
+      }
+    };
+    const scratchEnd = () => {
+      record.classList.remove('is-scratching');
+      record.style.transform = '';
+      if (scratchFrames[deck]) window.clearInterval(scratchFrames[deck]);
+      scratchFrames[deck] = 0;
+      const audio = player.querySelector<HTMLAudioElement>(`[data-audio="${deck}"]`);
+      if (audio && timers[deck]) void audio.play();
+    };
+    record.addEventListener('pointerdown', scratchStart);
+    record.addEventListener('pointermove', scratchMove);
+    record.addEventListener('pointerup', scratchEnd);
+    record.addEventListener('pointercancel', scratchEnd);
+  });
+
+  launch.addEventListener('click', () => {
+    const open = panel.hidden;
+    panel.hidden = !open;
+    launch.setAttribute('aria-expanded', String(open));
+  });
   close.addEventListener('click', () => {
-    setOpen(false);
-    trigger.focus();
+    panel.hidden = true;
+    launch.setAttribute('aria-expanded', 'false');
+    launch.focus();
   });
   document.addEventListener('keydown', event => {
-    if (event.key === 'Escape' && !panel.hidden) {
-      setOpen(false);
-      trigger.focus();
-    }
+    if (event.key === 'Escape' && !panel.hidden) close.click();
   });
 </script>
