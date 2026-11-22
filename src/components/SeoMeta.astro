@@ -45,7 +45,7 @@ const buildId = process.env.GITHUB_SHA ?? 'local';
 
 <meta name="theme-color" content="#121317" />
 <meta name="build" content={buildId} />
-<link rel="icon" type="image/png" sizes="32x32" href={href('/assets/favicon.png')} />
-<link rel="icon" type="image/svg+xml" href={href('/assets/favicon.svg')} />
-<link rel="apple-touch-icon" href={href('/assets/apple-touch-icon.png')} />
+<link rel="icon" type="image/png" sizes="32x32" href={href('/assets/favicon.png')} media="(prefers-color-scheme: light)" />
+<link rel="icon" type="image/png" sizes="32x32" href={href('/assets/favicon-dark.png')} media="(prefers-color-scheme: dark)" />
+<link rel="apple-touch-icon" sizes="180x180" href={href('/assets/apple-touch-icon.png')} />
 <link rel="sitemap" type="application/xml" href={href('/sitemap.xml')} />

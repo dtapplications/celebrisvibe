@@ -136,6 +136,63 @@ test.describe('pages', () => {
   });
 });
 
+test.describe('cookie consent', () => {
+  test('loads Google Tag Manager only after consent and revokes analytics consent', async ({ page }) => {
+    const tagManagerScript = 'https://www.googletagmanager.com/gtm.js?id=GTM-55HHXXWL';
+    const requests: string[] = [];
+    page.on('request', request => {
+      if (request.url() === tagManagerScript) requests.push(request.url());
+    });
+    await page.route(tagManagerScript, route => route.fulfill({ contentType: 'application/javascript', body: '' }));
+
+    await page.goto('/');
+    const banner = page.locator('[data-cookie-banner]');
+    await expect(banner).toBeVisible();
+    expect(requests).toEqual([]);
+
+    await banner.getByRole('button', { name: 'Отказвам' }).click();
+    await expect(banner).toBeHidden();
+    await expect(banner).toHaveCSS('display', 'none');
+    expect(await page.evaluate(() => localStorage.getItem('cv-analytics-consent'))).toBe('rejected');
+    await page.reload();
+    await expect(banner).toBeHidden();
+    expect(requests).toEqual([]);
+
+    await page.getByRole('button', { name: 'Настройки за бисквитки' }).click();
+    const tagManagerRequest = page.waitForRequest(tagManagerScript);
+    await banner.getByRole('button', { name: 'Приемам' }).click();
+    await tagManagerRequest;
+    await expect(banner).toBeHidden();
+    await expect(banner).toHaveCSS('display', 'none');
+    expect(await page.evaluate(() => localStorage.getItem('cv-analytics-consent'))).toBe('accepted');
+    expect(requests).toHaveLength(1);
+    const consentCommands = await page.evaluate(() => {
+      const dataLayer = (window as Window & { dataLayer?: unknown[] }).dataLayer ?? [];
+      return dataLayer.flatMap(entry => {
+        if (!Array.isArray(entry) || entry[0] !== 'consent') return [];
+        const state = entry[2] as { analytics_storage?: string } | undefined;
+        return [[entry[1], state?.analytics_storage]];
+      });
+    });
+    expect(consentCommands).toEqual([
+      ['default', 'denied'],
+      ['update', 'granted'],
+    ]);
+
+    await page.getByRole('button', { name: 'Настройки за бисквитки' }).click();
+    await banner.getByRole('button', { name: 'Отказвам' }).click();
+    expect(await page.evaluate(() => Reflect.get(window, 'ga-disable-G-5KRM64L1NP'))).toBe(true);
+    const revokedConsent = await page.evaluate(() => {
+      const dataLayer = (window as Window & { dataLayer?: unknown[] }).dataLayer ?? [];
+      const command = dataLayer.filter(entry => Array.isArray(entry) && entry[0] === 'consent').at(-1);
+      return Array.isArray(command) ? (command[2] as { analytics_storage?: string }).analytics_storage : null;
+    });
+    expect(revokedConsent).toBe('denied');
+    await page.reload();
+    expect(requests).toHaveLength(1);
+  });
+});
+
 test.describe('navigation and theme', () => {
   test('header links open each page and mark it as current', async ({ page }) => {
     await page.goto('/');
